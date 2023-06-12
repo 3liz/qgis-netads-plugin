@@ -1,0 +1,26 @@
+[general]
+name=NetADS
+qgisMinimumVersion=3.22
+description=NetADS est un logiciel web destiné à l'instruction dématérialisée des dossiers d'urbanisme.
+# Done automatically by qgis-plugin-ci
+version=master
+commitNumber=
+commitSha1=
+dateTime=
+changelog=changelog
+# End of qgis-plugin-ci
+author=3Liz
+email=info@3liz.com
+
+about=NetADS est un logiciel web destiné à l'instruction dématérialisée des dossiers d'urbanisme.
+hasProcessingProvider=yes
+
+tracker=https://github.com/
+repository=https://github.com/
+tags=foncier,cadastre,urbanisme,france,lizmap,ads
+
+homepage=https://docs.3liz.org/
+category=Analysis
+icon=resources/icons/icon.png
+experimental=False
+deprecated=False

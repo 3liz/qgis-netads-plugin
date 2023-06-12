@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+*.pytest_cache/
+
+# Mkdocs
+build/
+docs/CHANGELOG.md
+docs/CONTRIBUTING.md
+
+# OS
+.DS_Store
+
+# IDE
+.idea/
+*.code-workspace
+
+# Plugins, QGIS-plugin-CI
+netads.*.zip
+plugins.xml
+
+# Temp files
+*~
+*.bak
+*.gpkg-wal
+*.gpkg-shm
+.~lock.*
+
+# vscode
+.vscode/
