@@ -2,7 +2,11 @@
 
 from abc import abstractmethod
 
-from qgis.core import QgsProcessingAlgorithm
+from qgis.core import (
+    QgsProcessingAlgorithm,
+    QgsProcessingException,
+    QgsProviderConnectionException,
+)
 from qgis.PyQt.QtGui import QIcon
 
 from netads.qgis_plugin_tools import resources_path
@@ -23,8 +27,8 @@ class BaseProcessingAlgorithm(QgsProcessingAlgorithm):
         icon = resources_path("icons", "icon.png")
         if icon.exists():
             return QIcon(str(icon))
-        else:
-            return super().icon()
+
+        return super().icon()
 
     def parameters_help_string(self) -> str:
         """Return a formatted help string for all parameters."""
@@ -35,6 +39,16 @@ class BaseProcessingAlgorithm(QgsProcessingAlgorithm):
                 help_string += f"{param.name()} : {info}\n\n"
 
         return help_string
+
+    @staticmethod
+    def execute_sql(feedback, connection, sql: str):
+        """ Execute SQL, stop the algorithm in case of error. """
+        try:
+            connection.executeSql(sql)
+        except QgsProviderConnectionException as e:
+            connection.executeSql("ROLLBACK;")
+            feedback.reportError("Erreur lors de la requête SQL suivante : <br>" + sql)
+            raise QgsProcessingException(str(e))
 
     @abstractmethod
     def shortHelpString(self):

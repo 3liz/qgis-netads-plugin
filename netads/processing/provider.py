@@ -5,6 +5,7 @@ __email__ = "info@3liz.org"
 from qgis.core import QgsProcessingProvider
 from qgis.PyQt.QtGui import QIcon
 
+from netads.processing.data.import_communes import ImportCommunesAlg
 from netads.processing.database.create import CreateDatabaseStructure
 from netads.processing.database.upgrade import UpgradeDatabaseStructure
 from netads.qgis_plugin_tools import resources_path
@@ -12,8 +13,11 @@ from netads.qgis_plugin_tools import resources_path
 
 class NetAdsProvider(QgsProcessingProvider):
     def loadAlgorithms(self):
+        # Database
         self.addAlgorithm(CreateDatabaseStructure())
         self.addAlgorithm(UpgradeDatabaseStructure())
+        # Data
+        self.addAlgorithm(ImportCommunesAlg())
 
     def id(self):  # NOQA: A003
         return "netads"

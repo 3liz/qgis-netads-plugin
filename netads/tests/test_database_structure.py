@@ -22,6 +22,7 @@ VERSION = "0.0.1"
 SCHEMA = "netads"
 TABLES = (
     "qgis_plugin",
+    "communes",
 )
 
 

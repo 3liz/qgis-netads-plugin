@@ -1,6 +1,6 @@
 [general]
 name=NetADS
-qgisMinimumVersion=3.22
+qgisMinimumVersion=3.28
 description=NetADS est un logiciel web destiné à l'instruction dématérialisée des dossiers d'urbanisme.
 # Done automatically by qgis-plugin-ci
 version=master
