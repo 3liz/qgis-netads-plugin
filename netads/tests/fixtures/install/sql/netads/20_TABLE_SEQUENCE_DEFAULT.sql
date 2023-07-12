@@ -21,6 +21,66 @@ SET default_tablespace = '';
 
 ;
 
+-- parcelles
+CREATE TABLE netads.parcelles (
+    id_parcelles integer NOT NULL,
+    ccocom text,
+    ccodep text,
+    ccodir text,
+    ccopre text,
+    ccosec text,
+    dnupla text,
+    ident text,
+    ndeb text,
+    sdeb text,
+    nom text,
+    type text,
+    geom public.geometry(MultiPolygon,2154)
+);
+
+
+-- parcelles_id_parcelles_seq
+CREATE SEQUENCE netads.parcelles_id_parcelles_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+-- parcelles_id_parcelles_seq
+ALTER SEQUENCE netads.parcelles_id_parcelles_seq OWNED BY netads.parcelles.id_parcelles;
+
+-- communes
+CREATE TABLE netads.communes (
+    id_communes integer NOT NULL,
+    anneemajic integer,
+    ccodep text,
+    codcomm text,
+    nom text,
+    codeinsee character(5) NOT NULL,
+    created_user text,
+    created_date date,
+    last_edited_user text,
+    last_edited_date date,
+    geom public.geometry(MultiPolygon,2154)
+);
+
+
+-- communes_id_communes_seq
+CREATE SEQUENCE netads.communes_id_communes_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+-- communes_id_communes_seq
+ALTER SEQUENCE netads.communes_id_communes_seq OWNED BY netads.communes.id_communes;
+
+-- communes id_communes
+ALTER TABLE ONLY netads.communes ALTER COLUMN id_communes SET DEFAULT nextval('netads.communes_id_communes_seq'::regclass);
 
 -- qgis_plugin
 CREATE TABLE netads.qgis_plugin (
@@ -29,6 +89,9 @@ CREATE TABLE netads.qgis_plugin (
     version_date date NOT NULL,
     status smallint NOT NULL
 );
+
+-- parcelles id_parcelles
+ALTER TABLE ONLY netads.parcelles ALTER COLUMN id_parcelles SET DEFAULT nextval('netads.parcelles_id_parcelles_seq'::regclass);
 
 
 

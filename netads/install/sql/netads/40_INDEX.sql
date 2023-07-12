@@ -17,6 +17,12 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+SET default_tablespace = '';
+
+-- parcelles_index_geom_gist
+CREATE INDEX parcelles_index_geom_gist ON netads.parcelles USING gist (geom);
+
+
 --
 -- PostgreSQL database dump complete
 --
