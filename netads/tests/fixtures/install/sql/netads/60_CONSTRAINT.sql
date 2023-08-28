@@ -17,6 +17,18 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+SET default_tablespace = '';
+
+-- geo_impacts geo_impacts_pkey
+ALTER TABLE ONLY netads.geo_impacts
+    ADD CONSTRAINT geo_impacts_pkey PRIMARY KEY (id_geo_impacts);
+
+
+-- impacts impacts_pkey
+ALTER TABLE ONLY netads.impacts
+    ADD CONSTRAINT impacts_pkey PRIMARY KEY (id_impacts);
+
+
 --
 -- PostgreSQL database dump complete
 --
