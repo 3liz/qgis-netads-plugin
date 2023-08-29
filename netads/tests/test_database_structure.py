@@ -23,6 +23,9 @@ SCHEMA = "netads"
 TABLES = (
     "qgis_plugin",
     "communes",
+    "geo_impacts",
+    "parcelles",
+    "impacts",
 )
 
 

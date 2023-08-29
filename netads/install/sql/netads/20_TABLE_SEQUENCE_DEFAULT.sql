@@ -3,8 +3,8 @@ BEGIN;
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.3 (Debian 15.3-1.pgdg110+1)
--- Dumped by pg_dump version 15.3 (Debian 15.3-1.pgdg110+1)
+-- Dumped from database version 15.4 (Debian 15.4-1.pgdg110+1)
+-- Dumped by pg_dump version 15.4 (Debian 15.4-1.pgdg110+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -23,16 +23,16 @@ SET default_tablespace = '';
 
 -- communes
 CREATE TABLE netads.communes (
-    id_communes INTEGER NOT NULL,
-    anneemajic INTEGER,
-    ccodep TEXT,
-    codcomm TEXT,
-    nom TEXT,
-    codeinsee CHARACTER(5) NOT NULL,
-    created_user TEXT,
-    created_date DATE,
-    last_edited_user TEXT,
-    last_edited_date DATE,
+    id_communes integer NOT NULL,
+    anneemajic integer,
+    ccodep text,
+    codcomm text,
+    nom text,
+    codeinsee character(5) NOT NULL,
+    created_user text,
+    created_date date,
+    last_edited_user text,
+    last_edited_date date,
     geom public.geometry(MultiPolygon,2154)
 );
 
@@ -52,10 +52,10 @@ ALTER SEQUENCE netads.communes_id_communes_seq OWNED BY netads.communes.id_commu
 
 -- geo_impacts
 CREATE TABLE netads.geo_impacts (
-    id_geo_impacts INTEGER NOT NULL,
-    id_impacts INTEGER NOT NULL,
-    libelle TEXT,
-    codeinsee CHARACTER(5) NOT NULL,
+    id_geo_impacts integer NOT NULL,
+    id_impacts integer NOT NULL,
+    libelle text,
+    codeinsee character(5) NOT NULL,
     geom public.geometry(Polygon,2154)
 );
 
@@ -75,13 +75,13 @@ ALTER SEQUENCE netads.geo_impacts_id_geo_impacts_seq OWNED BY netads.geo_impacts
 
 -- impacts
 CREATE TABLE netads.impacts (
-    id_impacts INTEGER NOT NULL,
+    id_impacts integer NOT NULL,
     type text NOT NULL,
-    code CHARACTER VARYING(10) NOT NULL,
-    sous_code CHARACTER VARYING(10),
-    etiquette CHARACTER VARYING(10),
-    libelle CHARACTER VARYING(255) NOT NULL,
-    description TEXT,
+    code character varying(10) NOT NULL,
+    sous_code character varying(10),
+    etiquette character varying(10),
+    libelle character varying(255) NOT NULL,
+    description text,
     CONSTRAINT check_type CHECK ((type = ANY (ARRAY['ZONAGE'::text, 'SERVITUDE'::text, 'PRESCRIPTION'::text, 'INFORMATION'::text])))
 );
 
@@ -101,18 +101,18 @@ ALTER SEQUENCE netads.impacts_id_impacts_seq OWNED BY netads.impacts.id_impacts;
 
 -- parcelles
 CREATE TABLE netads.parcelles (
-    id_parcelles INTEGER NOT NULL,
-    ccocom TEXT,
-    ccodep TEXT,
-    ccodir TEXT,
-    ccopre TEXT,
-    ccosec TEXT,
-    dnupla TEXT,
-    ident TEXT,
-    ndeb TEXT,
-    sdeb TEXT,
-    nom TEXT,
-    type TEXT,
+    id_parcelles integer NOT NULL,
+    ccocom text,
+    ccodep text,
+    ccodir text,
+    ccopre text,
+    ccosec text,
+    dnupla text,
+    ident text,
+    ndeb text,
+    sdeb text,
+    nom text,
+    type text,
     geom public.geometry(MultiPolygon,2154)
 );
 
@@ -132,10 +132,10 @@ ALTER SEQUENCE netads.parcelles_id_parcelles_seq OWNED BY netads.parcelles.id_pa
 
 -- qgis_plugin
 CREATE TABLE netads.qgis_plugin (
-    id INTEGER NOT NULL,
-    version TEXT NOT NULL,
-    version_date DATE NOT NULL,
-    status SMALLINT NOT NULL
+    id integer NOT NULL,
+    version text NOT NULL,
+    version_date date NOT NULL,
+    status smallint NOT NULL
 );
 
 

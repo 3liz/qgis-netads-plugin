@@ -4,7 +4,7 @@ __email__ = "info@3liz.org"
 
 from unittest import TestCase
 
-from qgis.core import QgsApplication  # NOQA
+from qgis.core import QgsApplication
 
 
 class TestCasePlugin(TestCase):

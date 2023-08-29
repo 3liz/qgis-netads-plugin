@@ -5,7 +5,7 @@ __email__ = "info@3liz.org"
 
 from typing import Dict
 
-from qgis.core import (
+from qgis.core import (  # QgsProviderConnectionException,
     QgsExpressionContextUtils,
     QgsProcessingContext,
     QgsProcessingException,
@@ -15,7 +15,6 @@ from qgis.core import (
     QgsProcessingParameterBoolean,
     QgsProcessingParameterDatabaseSchema,
     QgsProcessingParameterProviderConnection,
-    QgsProviderConnectionException,
     QgsProviderRegistry,
 )
 

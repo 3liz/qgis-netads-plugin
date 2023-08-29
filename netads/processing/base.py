@@ -3,8 +3,10 @@
 from abc import abstractmethod
 
 from qgis.core import (
+    QgsAbstractDatabaseProviderConnection,
     QgsProcessingAlgorithm,
     QgsProcessingException,
+    QgsProcessingFeedback,
     QgsProviderConnectionException,
 )
 from qgis.PyQt.QtGui import QIcon
@@ -41,7 +43,10 @@ class BaseProcessingAlgorithm(QgsProcessingAlgorithm):
         return help_string
 
     @staticmethod
-    def execute_sql(feedback, connection, sql: str):
+    def execute_sql(
+            feedback: QgsProcessingFeedback,
+            connection: QgsAbstractDatabaseProviderConnection,
+            sql: str):
         """ Execute SQL, stop the algorithm in case of error. """
         try:
             connection.executeSql(sql)
