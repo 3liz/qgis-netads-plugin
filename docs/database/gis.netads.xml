@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><database name="gis" schema="netads" type="PostgreSQL - 15.4 (Debian 15.4-1.pgdg110+1)">
+   <sequences>
+      <sequence increment="1" name="communes_id_communes_seq" startValue="1"/>
+      <sequence increment="1" name="geo_impacts_id_geo_impacts_seq" startValue="1"/>
+      <sequence increment="1" name="impacts_id_impacts_seq" startValue="1"/>
+      <sequence increment="1" name="parcelles_id_parcelles_seq" startValue="1"/>
+   </sequences>
+   <tables>
+      <table name="communes" remarks="" schema="netads" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('netads.communes_id_communes_seq'::regclass)" digits="0" id="0" name="id_communes" nullable="false" remarks="" size="10" type="serial" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="anneemajic" nullable="true" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="ccodep" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="codcomm" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="nom" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="codeinsee" nullable="false" remarks="" size="5" type="bpchar" typeCode="1"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="created_user" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="created_date" nullable="true" remarks="" size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="last_edited_user" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="last_edited_date" nullable="true" remarks="" size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="geom" nullable="true" remarks="" size="2147483647" type="geometry" typeCode="1111"/>
+      </table>
+      <table name="geo_impacts" remarks="" schema="netads" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('netads.geo_impacts_id_geo_impacts_seq'::regclass)" digits="0" id="0" name="id_geo_impacts" nullable="false" remarks="" size="10" type="serial" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="id_impacts" nullable="false" remarks="" size="10" type="int4" typeCode="4">
+            <parent column="id_impacts" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="netads" table="impacts"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="libelle" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="codeinsee" nullable="false" remarks="" size="5" type="bpchar" typeCode="1"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="geom" nullable="true" remarks="" size="2147483647" type="geometry" typeCode="1111"/>
+         <primaryKey column="id_geo_impacts" sequenceNumberInPK="1"/>
+         <index name="geo_impacts_pkey" unique="true">
+            <column ascending="true" name="id_geo_impacts"/>
+         </index>
+      </table>
+      <table name="impacts" remarks="" schema="netads" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('netads.impacts_id_impacts_seq'::regclass)" digits="0" id="0" name="id_impacts" nullable="false" remarks="" size="10" type="serial" typeCode="4">
+            <child column="id_impacts" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="netads" table="geo_impacts"/>
+         </column>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="type" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="code" nullable="false" remarks="" size="10" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="sous_code" nullable="true" remarks="" size="10" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="etiquette" nullable="true" remarks="" size="10" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="libelle" nullable="false" remarks="" size="255" type="varchar" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="description" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <primaryKey column="id_impacts" sequenceNumberInPK="1"/>
+         <index name="impacts_pkey" unique="true">
+            <column ascending="true" name="id_impacts"/>
+         </index>
+         <checkConstraint constraint="((type = ANY (ARRAY['ZONAGE'::text, 'SERVITUDE'::text, 'PRESCRIPTION'::text, 'INFORMATION'::text])))" name="check_type"/>
+      </table>
+      <table name="parcelles" remarks="" schema="netads" type="TABLE">
+         <column autoUpdated="true" defaultValue="nextval('netads.parcelles_id_parcelles_seq'::regclass)" digits="0" id="0" name="id_parcelles" nullable="false" remarks="" size="10" type="serial" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="ccocom" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="ccodep" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="ccodir" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="ccopre" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="ccosec" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="dnupla" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="ident" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="ndeb" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="sdeb" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="nom" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="11" name="type" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="12" name="geom" nullable="true" remarks="" size="2147483647" type="geometry" typeCode="1111"/>
+         <index name="parcelles_index_geom_gist" unique="false">
+            <column ascending="true" name="geom"/>
+         </index>
+      </table>
+      <table name="qgis_plugin" remarks="" schema="netads" type="TABLE">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="0" name="id" nullable="false" remarks="" size="10" type="int4" typeCode="4"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="version" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="version_date" nullable="false" remarks="" size="13" type="date" typeCode="91"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="status" nullable="false" remarks="" size="5" type="int2" typeCode="5"/>
+      </table>
+   </tables>
+</database>

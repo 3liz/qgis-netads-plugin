@@ -7,7 +7,6 @@ docker run \
   --network=docker_${NETWORK} \
   etrimaille/schemaspy-pg:latest \
   -t pgsql-mat \
-  -dp /drivers \
   -host db \
   -db gis \
   -u docker \
