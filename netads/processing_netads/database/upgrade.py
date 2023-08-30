@@ -19,7 +19,7 @@ from qgis.core import (
     QgsProviderRegistry,
 )
 
-from netads.processing.database.base import BaseDatabaseAlgorithm
+from netads.processing_netads.database.base import BaseDatabaseAlgorithm
 from netads.qgis_plugin_tools import (
     available_migrations,
     format_version_integer,

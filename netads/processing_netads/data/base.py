@@ -2,8 +2,8 @@ __copyright__ = "Copyright 2023, 3Liz"
 __license__ = "GPL version 3"
 __email__ = "info@3liz.org"
 
-
-from typing import Tuple, Union
+from collections import namedtuple
+from typing import Optional, Tuple, Union
 
 from qgis.core import (
     QgsAbstractDatabaseProviderConnection,
@@ -12,7 +12,11 @@ from qgis.core import (
     QgsVectorLayer,
 )
 
-from netads.processing.base import BaseProcessingAlgorithm
+from netads.processing_netads.base import BaseProcessingAlgorithm
+
+
+class Layer(namedtuple('Layer', ['id', 'geom'])):
+    pass
 
 
 class BaseDataAlgorithm(BaseProcessingAlgorithm):
@@ -23,18 +27,9 @@ class BaseDataAlgorithm(BaseProcessingAlgorithm):
         """Constructor."""
         super().__init__()
         self.layers_name = dict()
-        self.layers_name["communes"] = dict()
-        self.layers_name["communes"]["id"] = "id_communes"
-        self.layers_name["communes"]["geom"] = "geom"
-        self.layers_name["parcelles"] = dict()
-        self.layers_name["parcelles"]["id"] = "id_parcelles"
-        self.layers_name["parcelles"]["geom"] = "geom"
-        self.layers_name["dossiers_netads"] = dict()
-        self.layers_name["dossiers_netads"]["id"] = "id_dossiers_netads"
-        self.layers_name["dossiers_netads"]["geom"] = "geom"
-        self.layers_name["contraintes"] = dict()
-        self.layers_name["contraintes"]["id"] = "id_contraintes"
-        self.layers_name["contraintes"]["geom"] = None
+        self.layers_name["communes"] = Layer("id_communes", "geom")
+        self.layers_name["parcelles"] = Layer("id_parcelles", "geom")
+        self.layers_name["impacts"] = Layer("id_impacts", None)
 
     def group(self):
         return "Import des données"
@@ -48,11 +43,14 @@ class BaseDataAlgorithm(BaseProcessingAlgorithm):
         uri: QgsDataSourceUri,
         schema: str,
         table: str,
-        geom: str,
+        geom: Optional[str],
         sql: str,
         pk: str = None,
     ) -> Union[QgsVectorLayer, bool]:
         """Create vector layer from database table"""
+        if geom is None:
+            geom = ""
+
         if pk:
             uri.setDataSource(schema, table, geom, sql, pk)
         else:
@@ -100,9 +98,9 @@ class BaseDataAlgorithm(BaseProcessingAlgorithm):
             uri,
             schema,
             name,
-            self.layers_name[name]["geom"],
+            self.layers_name[name].geom,
             "",
-            self.layers_name[name]["id"],
+            self.layers_name[name].id,
         )
         if not result:
             return f"La couche {name} ne peut pas être chargée", False

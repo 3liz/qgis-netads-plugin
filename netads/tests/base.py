@@ -4,7 +4,11 @@ __email__ = "info@3liz.org"
 
 from unittest import TestCase
 
+import processing
 from qgis.core import QgsApplication
+
+from netads.processing_netads.provider import NetAdsProvider as ProcessingProvider
+from tests.feedbacks import FeedbackPrint
 
 
 class TestCasePlugin(TestCase):
@@ -26,3 +30,17 @@ class TestCasePlugin(TestCase):
     def tearDownClass(cls) -> None:
         if cls.qgs:
             cls.qgs.exitQgis()
+
+    def setUp(self) -> None:
+        provider = ProcessingProvider()
+        registry = QgsApplication.processingRegistry()
+        if not registry.providerById(provider.id()):
+            registry.addProvider(provider)
+
+        params = {
+            "CONNECTION_NAME": "test_database",
+            "OVERRIDE": True,
+            "CRS": "EPSG:2154",
+        }
+        alg = "{}:create_database_structure".format(provider.id())
+        results = processing.run(alg, params, feedback=FeedbackPrint())

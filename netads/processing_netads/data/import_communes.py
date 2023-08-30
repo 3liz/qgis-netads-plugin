@@ -18,7 +18,7 @@ from qgis.core import (  # QgsProviderConnectionException,
     QgsProviderRegistry,
 )
 
-from netads.processing.data.base import BaseDataAlgorithm
+from netads.processing_netads.data.base import BaseDataAlgorithm
 
 
 class ImportCommunesAlg(BaseDataAlgorithm):

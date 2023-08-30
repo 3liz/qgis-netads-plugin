@@ -11,7 +11,7 @@ from qgis.core import (
 )
 from qgis.testing import unittest
 
-from netads.processing.provider import NetAdsProvider as ProcessingProvider
+from netads.processing_netads.provider import NetAdsProvider as ProcessingProvider
 from netads.qgis_plugin_tools import available_migrations
 
 __copyright__ = "Copyright 2023, 3Liz"

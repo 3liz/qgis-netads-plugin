@@ -8,7 +8,7 @@ from qgis.core import (
     QgsProviderConnectionException,
 )
 
-from netads.processing.base import BaseProcessingAlgorithm
+from netads.processing_netads.base import BaseProcessingAlgorithm
 
 SCHEMA = "netads"
 

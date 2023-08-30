@@ -8,7 +8,7 @@ from qgis.PyQt.QtGui import QDesktopServices, QIcon
 from qgis.PyQt.QtWidgets import QAction
 from qgis.utils import iface
 
-from netads.processing.provider import NetAdsProvider
+from netads.processing_netads.provider import NetAdsProvider
 from netads.qgis_plugin_tools import resources_path
 
 URL_DOCUMENTATION = "https://docs.3liz.org/"
