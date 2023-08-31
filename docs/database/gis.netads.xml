@@ -29,7 +29,7 @@
       <table name="geo_impacts" remarks="" schema="netads" type="TABLE">
          <column autoUpdated="true" defaultValue="nextval('netads.geo_impacts_id_geo_impacts_seq'::regclass)" digits="0" id="0" name="id_geo_impacts" nullable="false" remarks="" size="10" type="serial" typeCode="4"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="id_impacts" nullable="false" remarks="" size="10" type="int4" typeCode="4">
-            <parent column="id_impacts" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="netads" table="impacts"/>
+            <parent column="id_impacts" foreignKey="geo_impacts_fkey" implied="false" onDeleteCascade="true" schema="netads" table="impacts"/>
          </column>
          <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="libelle" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="codeinsee" nullable="false" remarks="" size="5" type="bpchar" typeCode="1"/>
@@ -44,7 +44,7 @@
       </table>
       <table name="impacts" remarks="" schema="netads" type="TABLE">
          <column autoUpdated="true" defaultValue="nextval('netads.impacts_id_impacts_seq'::regclass)" digits="0" id="0" name="id_impacts" nullable="false" remarks="" size="10" type="serial" typeCode="4">
-            <child column="id_impacts" foreignKey="Implied Constraint" implied="true" onDeleteCascade="false" schema="netads" table="geo_impacts"/>
+            <child column="id_impacts" foreignKey="geo_impacts_fkey" implied="false" onDeleteCascade="true" schema="netads" table="geo_impacts"/>
          </column>
          <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="type" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="code" nullable="false" remarks="" size="10" type="varchar" typeCode="12"/>
