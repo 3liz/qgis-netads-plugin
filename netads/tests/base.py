@@ -3,9 +3,7 @@ __license__ = 'GPL version 3'
 __email__ = 'info@3liz.org'
 
 
-from processing.core.Processing import Processing
 from qgis.core import QgsApplication
-from qgis.PyQt.QtCore import QCoreApplication, QSettings
 from qgis.testing import unittest
 
 from netads.processing_netads.provider import NetAdsProvider as Provider

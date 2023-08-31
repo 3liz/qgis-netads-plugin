@@ -44,6 +44,11 @@ ALTER TABLE ONLY netads.qgis_plugin
     ADD CONSTRAINT qgis_plugin_pkey PRIMARY KEY (id);
 
 
+-- geo_impacts geo_impacts_fkey
+ALTER TABLE ONLY netads.geo_impacts
+    ADD CONSTRAINT geo_impacts_fkey FOREIGN KEY (id_impacts) REFERENCES netads.impacts(id_impacts) ON DELETE CASCADE;
+
+
 --
 -- PostgreSQL database dump complete
 --
