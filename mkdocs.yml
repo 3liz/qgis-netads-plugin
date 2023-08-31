@@ -12,6 +12,7 @@ nav:
     - Accueil: index.md
     - Changelog: changelog.md
     - Contribution: contributing.md
+    - Processing: processing/README.md
     - Database: database/index.html
 
 plugins:
