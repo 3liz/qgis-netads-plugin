@@ -18,6 +18,13 @@
          <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="last_edited_user" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="last_edited_date" nullable="true" remarks="" size="13" type="date" typeCode="91"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="geom" nullable="true" remarks="" size="2147483647" type="geometry" typeCode="1111"/>
+         <primaryKey column="id_communes" sequenceNumberInPK="1"/>
+         <index name="communes_pkey" unique="true">
+            <column ascending="true" name="id_communes"/>
+         </index>
+         <index name="sidx_communes_geom" unique="false">
+            <column ascending="true" name="geom"/>
+         </index>
       </table>
       <table name="geo_impacts" remarks="" schema="netads" type="TABLE">
          <column autoUpdated="true" defaultValue="nextval('netads.geo_impacts_id_geo_impacts_seq'::regclass)" digits="0" id="0" name="id_geo_impacts" nullable="false" remarks="" size="10" type="serial" typeCode="4"/>
@@ -30,6 +37,9 @@
          <primaryKey column="id_geo_impacts" sequenceNumberInPK="1"/>
          <index name="geo_impacts_pkey" unique="true">
             <column ascending="true" name="id_geo_impacts"/>
+         </index>
+         <index name="sidx_geo_impacts_geom" unique="false">
+            <column ascending="true" name="geom"/>
          </index>
       </table>
       <table name="impacts" remarks="" schema="netads" type="TABLE">
@@ -62,6 +72,10 @@
          <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="nom" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="11" name="type" nullable="true" remarks="" size="2147483647" type="text" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="12" name="geom" nullable="true" remarks="" size="2147483647" type="geometry" typeCode="1111"/>
+         <primaryKey column="id_parcelles" sequenceNumberInPK="1"/>
+         <index name="parcelles_pkey" unique="true">
+            <column ascending="true" name="id_parcelles"/>
+         </index>
          <index name="parcelles_index_geom_gist" unique="false">
             <column ascending="true" name="geom"/>
          </index>
@@ -71,6 +85,10 @@
          <column autoUpdated="false" defaultValue="null" digits="0" id="1" name="version" nullable="false" remarks="" size="2147483647" type="text" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="2" name="version_date" nullable="false" remarks="" size="13" type="date" typeCode="91"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="3" name="status" nullable="false" remarks="" size="5" type="int2" typeCode="5"/>
+         <primaryKey column="id" sequenceNumberInPK="1"/>
+         <index name="qgis_plugin_pkey" unique="true">
+            <column ascending="true" name="id"/>
+         </index>
       </table>
    </tables>
 </database>
