@@ -5,10 +5,13 @@ __email__ = "info@3liz.org"
 from unittest import TestCase
 
 import processing
-from qgis.core import QgsApplication
 
-from netads.processing_netads.provider import NetAdsProvider as ProcessingProvider
+from qgis.core import QgsApplication
 from tests.feedbacks import FeedbackPrint
+
+from netads.processing_netads.provider import (
+    NetAdsProvider as ProcessingProvider,
+)
 
 
 class TestCasePlugin(TestCase):
@@ -43,4 +46,4 @@ class TestCasePlugin(TestCase):
             "CRS": "EPSG:2154",
         }
         alg = "{}:create_database_structure".format(provider.id())
-        results = processing.run(alg, params, feedback=FeedbackPrint())
+        processing.run(alg, params, feedback=FeedbackPrint())

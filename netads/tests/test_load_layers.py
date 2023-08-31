@@ -2,14 +2,12 @@ __copyright__ = "Copyright 2023, 3Liz"
 __license__ = "GPL version 3"
 __email__ = "info@3liz.org"
 
-from unittest import main
 
 import processing
 
-from qgis.core import QgsProcessingContext, QgsProject
+from tests.feedbacks import FeedbackPrint
 
 from netads.tests.base import TestCasePlugin
-from tests.feedbacks import FeedbackPrint
 
 
 class TestPlugin(TestCasePlugin):
