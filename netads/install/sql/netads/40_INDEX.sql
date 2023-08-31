@@ -23,6 +23,14 @@ SET default_tablespace = '';
 CREATE INDEX parcelles_index_geom_gist ON netads.parcelles USING gist (geom);
 
 
+-- sidx_communes_geom
+CREATE INDEX sidx_communes_geom ON netads.communes USING gist (geom);
+
+
+-- sidx_geo_impacts_geom
+CREATE INDEX sidx_geo_impacts_geom ON netads.geo_impacts USING gist (geom);
+
+
 --
 -- PostgreSQL database dump complete
 --
