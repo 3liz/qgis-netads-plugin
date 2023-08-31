@@ -1,23 +1,22 @@
-__copyright__ = "Copyright 2023, 3Liz"
-__license__ = "GPL version 3"
-__email__ = "info@3liz.org"
+__copyright__ = 'Copyright 2023, 3Liz'
+__license__ = 'GPL version 3'
+__email__ = 'info@3liz.org'
 
-from unittest import TestCase
 
-import processing
-
+from processing.core.Processing import Processing
 from qgis.core import QgsApplication
-from tests.feedbacks import FeedbackPrint
+from qgis.PyQt.QtCore import QCoreApplication, QSettings
+from qgis.testing import unittest
 
-from netads.processing_netads.provider import (
-    NetAdsProvider as ProcessingProvider,
-)
+from netads.processing_netads.provider import NetAdsProvider as Provider
 
 
-class TestCasePlugin(TestCase):
+class BaseTestProcessing(unittest.TestCase):
 
+    """ Base test class for Processing. """
     qgs = None
 
+    # noinspection PyCallByClass,PyArgumentList
     @classmethod
     def setUpClass(cls) -> None:
         from qgis.utils import iface
@@ -35,15 +34,12 @@ class TestCasePlugin(TestCase):
             cls.qgs.exitQgis()
 
     def setUp(self) -> None:
-        provider = ProcessingProvider()
         registry = QgsApplication.processingRegistry()
-        if not registry.providerById(provider.id()):
-            registry.addProvider(provider)
 
-        params = {
-            "CONNECTION_NAME": "test_database",
-            "OVERRIDE": True,
-            "CRS": "EPSG:2154",
-        }
-        alg = "{}:create_database_structure".format(provider.id())
-        processing.run(alg, params, feedback=FeedbackPrint())
+        self.provider = Provider()
+        if not registry.providerById(self.provider.id()):
+            registry.addProvider(self.provider)
+
+    # def tearDown(self) -> None:
+        # if self.provider:
+        #     QgsApplication.processingRegistry().removeProvider(self.provider)

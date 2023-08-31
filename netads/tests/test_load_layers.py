@@ -7,10 +7,10 @@ import processing
 
 from tests.feedbacks import FeedbackPrint
 
-from netads.tests.base import TestCasePlugin
+from netads.tests.base_database import DatabaseTestCase
 
 
-class TestPlugin(TestCasePlugin):
+class TestPlugin(DatabaseTestCase):
 
     def test_import_layers(self):
         """ Test import layers. """
