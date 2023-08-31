@@ -5,13 +5,12 @@ __email__ = "info@3liz.org"
 
 from typing import Dict
 
-from qgis.core import (  # QgsProviderConnectionException,
+from qgis.core import (
     QgsExpressionContextUtils,
     QgsProcessingContext,
     QgsProcessingException,
     QgsProcessingFeedback,
     QgsProcessingOutputMultipleLayers,
-    QgsProcessingOutputString,
     QgsProcessingParameterBoolean,
     QgsProcessingParameterDatabaseSchema,
     QgsProcessingParameterProviderConnection,
@@ -32,7 +31,6 @@ class ImportCommunesAlg(BaseDataAlgorithm):
     TRUNCATE_PARCELLES = "TRUNCATE_PARCELLES"
     IMPORT_PROJECT_LAYER = "IMPORT_PROJECT_LAYER"
     OUTPUT = "OUTPUT"
-    OUTPUT_MSG = "OUTPUT MSG"
 
     def name(self):
         return "data_commune"
@@ -107,8 +105,6 @@ class ImportCommunesAlg(BaseDataAlgorithm):
             QgsProcessingOutputMultipleLayers(self.OUTPUT, "Couches de sortie")
         )
 
-        self.addOutput(QgsProcessingOutputString(self.OUTPUT_MSG, "Message de sortie"))
-
     def processAlgorithm(
         self,
         parameters: Dict,
@@ -154,9 +150,8 @@ class ImportCommunesAlg(BaseDataAlgorithm):
         )
 
         output_layers = []
-        msg = "success"
         if not import_layer:
-            return {self.OUTPUT_MSG: msg, self.OUTPUT: output_layers}
+            return {self.OUTPUT: output_layers}
 
         result_msg, uri = self.get_uri(connection)
         feedback.pushInfo(result_msg)
@@ -170,4 +165,4 @@ class ImportCommunesAlg(BaseDataAlgorithm):
         if layer:
             output_layers.append(layer.id())
 
-        return {self.OUTPUT_MSG: msg, self.OUTPUT: output_layers}
+        return {self.OUTPUT: output_layers}

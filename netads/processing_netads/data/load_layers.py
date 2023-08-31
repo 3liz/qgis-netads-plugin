@@ -30,6 +30,8 @@ class LoadLayersAlgorithm(BaseDataAlgorithm):
     CODE_CLIENT = "CODE_CLIENT"
     OUTPUT = "OUTPUT"
 
+    KEY = "netads_idclient"
+
     def name(self):
         return "load_layers"
 
@@ -37,7 +39,12 @@ class LoadLayersAlgorithm(BaseDataAlgorithm):
         return "Chargement des couches depuis la base"
 
     def shortHelpString(self):
-        return "Charger les couches de la base de données."
+        return (
+            "Charger les couches de la base de données."
+            "<br>"
+            f"Le code client est obligatoire si il n'est pas fourni dans le projet dans une variable de "
+            f"projet '{self.KEY}'."
+        )
 
     def initAlgorithm(self, config: Dict):
         # INPUTS
@@ -90,22 +97,21 @@ class LoadLayersAlgorithm(BaseDataAlgorithm):
         )
         schema = self.parameterAsSchema(parameters, self.SCHEMA, context)
 
-        key = "netads_idclient"
         code_client = self.parameterAsString(parameters, self.CODE_CLIENT, context)
         if code_client:
-            QgsExpressionContextUtils.setProjectVariable(context.project(), key, code_client)
+            QgsExpressionContextUtils.setProjectVariable(context.project(), self.KEY, code_client)
             feedback.pushInfo(
-                f"Ajout du code client NetADS {code_client} dans la variable du projet '{key}'."
+                f"Ajout du code client NetADS {code_client} dans la variable du projet '{self.KEY}'."
             )
         else:
             # The input was empty so the variable must be in the project already
             variables = context.project().customVariables()
-            url = variables.get(key)
+            url = variables.get(self.KEY)
             if not url:
                 # The virtual field needs this variable on runtime.
                 raise QgsProcessingException(
-                    f"Votre projet ne contient pas la variable {key}, vous devez donc renseigner la valeur "
-                    f"pour l'URL"
+                    f"Votre projet ne contient pas la variable {self.KEY}, vous devez donc renseigner la "
+                    f"valeur pour l'identifiant client NetADS."
                 )
 
         feedback.pushInfo("## Connexion à la base de données ##")
