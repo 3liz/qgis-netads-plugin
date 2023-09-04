@@ -7,9 +7,7 @@ from qgis.core import (
     QgsProviderRegistry,
 )
 
-from netads.processing_netads.provider import (
-    NetAdsProvider as ProcessingProvider,
-)
+from netads.processing_netads.provider import NetAdsProvider as ProcessingProvider
 from netads.tests.base import BaseTestProcessing
 
 __copyright__ = "Copyright 2023, 3Liz"
@@ -27,9 +25,9 @@ class DatabaseTestCase(BaseTestProcessing):
 
     def setUp(self) -> None:
         self.provider = None
-        self.metadata = QgsProviderRegistry.instance().providerMetadata('postgres')
+        self.metadata = QgsProviderRegistry.instance().providerMetadata("postgres")
 
-        self.connection = self.metadata.findConnection('test_database')
+        self.connection = self.metadata.findConnection("test_database")
         self.connection: QgsAbstractDatabaseProviderConnection
         if SCHEMA in self.connection.schemas():
             self.connection.dropSchema(SCHEMA, True)
@@ -46,7 +44,9 @@ class DatabaseTestCase(BaseTestProcessing):
             "CRS": "EPSG:2154",
         }
         processing.run(
-            "{}:create_database_structure".format(self.provider.id()), params, feedback=None,
+            "{}:create_database_structure".format(self.provider.id()),
+            params,
+            feedback=None,
         )
 
     # def tearDown(self) -> None:

@@ -196,9 +196,7 @@ class ImportImpactsAlg(BaseDataAlgorithm):
         connection_name = self.parameterAsConnectionName(
             parameters, self.CONNECTION_NAME, context
         )
-        schema_netads = self.parameterAsSchema(
-            parameters, self.SCHEMA_NETADS, context
-        )
+        schema_netads = self.parameterAsSchema(parameters, self.SCHEMA_NETADS, context)
 
         # noinspection PyArgumentList
         metadata = QgsProviderRegistry.instance().providerMetadata("postgres")
@@ -253,9 +251,7 @@ class ImportImpactsAlg(BaseDataAlgorithm):
             return {self.COUNT_FEATURES: 0, self.COUNT_NEW_IMPACTS: 0}
 
         crs = self.check_current_crs(connection, schema_netads, feedback)
-        feedback.pushInfo(
-            f"La projection du schéma {schema_netads} est en EPSG:{crs}."
-        )
+        feedback.pushInfo(f"La projection du schéma {schema_netads} est en EPSG:{crs}.")
 
         layer = self.prepare_data(
             context,
@@ -311,9 +307,7 @@ class ImportImpactsAlg(BaseDataAlgorithm):
             return {self.COUNT_FEATURES: 0, self.COUNT_NEW_IMPACTS: 0}
 
         connection.executeSql("COMMIT;")
-        feedback.pushInfo(
-            f"{success} nouvelles géo-impacts dans la base de données"
-        )
+        feedback.pushInfo(f"{success} nouvelles géo-impacts dans la base de données")
         return {
             self.COUNT_FEATURES: success,
             self.COUNT_NEW_IMPACTS: len(missing_in_db),
@@ -512,9 +506,7 @@ class ImportImpactsAlg(BaseDataAlgorithm):
         uri.setTable("impacts")
         uri.setKeyColumn("id_impacts")
         existing_impacts = {}
-        existing_constraints_layer = QgsVectorLayer(
-            uri.uri(), "impacts", "postgres"
-        )
+        existing_constraints_layer = QgsVectorLayer(uri.uri(), "impacts", "postgres")
         request = QgsFeatureRequest()
         request.setFilterExpression(
             f"\"groupe\" = '{group}' AND \"sous_groupe\" = '{sub_group}'"
@@ -636,13 +628,8 @@ class ImportImpactsAlg(BaseDataAlgorithm):
         uniques = []
         uniques_str = []
         for feature in layer.getFeatures(request):
-
-            content_label = ImportImpactsAlg.clean_value(
-                feature.attribute(label_field)
-            )
-            content_text = ImportImpactsAlg.clean_value(
-                feature.attribute(text_field)
-            )
+            content_label = ImportImpactsAlg.clean_value(feature.attribute(label_field))
+            content_text = ImportImpactsAlg.clean_value(feature.attribute(text_field))
 
             couple = (content_label, content_text)
             if couple not in uniques:

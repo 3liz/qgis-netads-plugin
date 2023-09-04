@@ -118,9 +118,7 @@ class ImportParcellesAlg(BaseDataAlgorithm):
         schema_cadastre = self.parameterAsSchema(
             parameters, self.SCHEMA_CADASTRE, context
         )
-        schema_netads = self.parameterAsSchema(
-            parameters, self.SCHEMA_NETADS, context
-        )
+        schema_netads = self.parameterAsSchema(parameters, self.SCHEMA_NETADS, context)
 
         data_update = self.parameterAsBool(parameters, self.TRUNCATE_PARCELLES, context)
 
@@ -131,7 +129,6 @@ class ImportParcellesAlg(BaseDataAlgorithm):
             )
 
         if data_update:
-
             feedback.pushInfo("## Mise à jour des données parcelles ##")
 
             sql = f"""

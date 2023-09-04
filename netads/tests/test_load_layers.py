@@ -12,9 +12,8 @@ from netads.tests.feedbacks import FeedbackPrint
 
 
 class TestPlugin(DatabaseTestCase):
-
     def test_import_layers(self):
-        """ Test import layers. """
+        """Test import layers."""
         project = QgsProject()
         variables = project.customVariables()
         self.assertNotIn("netads_idclient", list(variables.keys()))
@@ -22,8 +21,8 @@ class TestPlugin(DatabaseTestCase):
         context.setProject(project)
 
         params = {
-            'CONNECTION_NAME': 'test_database',
-            'SCHEMA': 'netads',
+            "CONNECTION_NAME": "test_database",
+            "SCHEMA": "netads",
         }
         alg = "netads:load_layers"
 
@@ -31,7 +30,7 @@ class TestPlugin(DatabaseTestCase):
             # Code client is not correct
             processing.run(alg, params, feedback=FeedbackPrint(), context=context)
 
-        params['CODE_CLIENT'] = 'test'
+        params["CODE_CLIENT"] = "test"
 
         results = processing.run(
             alg,
@@ -43,9 +42,10 @@ class TestPlugin(DatabaseTestCase):
         variables = project.customVariables()
         self.assertEqual(variables["netads_idclient"], "test")
 
-        self.assertEqual(3, len(results['OUTPUT']))
+        self.assertEqual(3, len(results["OUTPUT"]))
 
 
 if __name__ == "__main__":
     from qgis.testing import start_app
+
     start_app()
