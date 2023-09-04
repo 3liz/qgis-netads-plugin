@@ -36,7 +36,9 @@ class DatabaseTestCase(BaseTestProcessing):
         self.feedback = FeedbackPrint()
 
         self.provider = ProcessingProvider()
-        QgsApplication.processingRegistry().addProvider(self.provider)
+        registry = QgsApplication.processingRegistry()
+        if not registry.providerById(self.provider.id()):
+            registry.addProvider(self.provider)
 
         params = {
             "CONNECTION_NAME": "test_database",

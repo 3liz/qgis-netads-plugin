@@ -1,0 +1,663 @@
+__copyright__ = "Copyright 2023, 3Liz"
+__license__ = "GPL version 3"
+__email__ = "info@3liz.org"
+
+from typing import Callable, Dict, List, Tuple, Union
+
+from qgis import processing
+from qgis.core import (
+    QgsAbstractDatabaseProviderConnection,
+    QgsCoordinateReferenceSystem,
+    QgsDataSourceUri,
+    QgsExpression,
+    QgsExpressionContextUtils,
+    QgsFeatureRequest,
+    QgsProcessing,
+    QgsProcessingContext,
+    QgsProcessingException,
+    QgsProcessingFeatureSource,
+    QgsProcessingFeedback,
+    QgsProcessingOutputNumber,
+    QgsProcessingParameterDatabaseSchema,
+    QgsProcessingParameterFeatureSource,
+    QgsProcessingParameterField,
+    QgsProcessingParameterProviderConnection,
+    QgsProcessingParameterString,
+    QgsProcessingUtils,
+    QgsProviderConnectionException,
+    QgsProviderRegistry,
+    QgsVectorLayer,
+)
+from qgis.PyQt.QtCore import NULL
+
+from netads.processing_netads.data.base import BaseDataAlgorithm
+
+
+def sql_error_handler(func: Callable):
+    """Decorator to catch sql exceptions."""
+
+    def inner_function(*args, **kwargs):
+        try:
+            value = func(*args, **kwargs)
+            return value
+        except QgsProviderConnectionException as e:
+            raise QgsProcessingException(f"Erreur SQL : {str(e)}")
+
+    return inner_function
+
+
+class ImportImpactsAlg(BaseDataAlgorithm):
+    """
+    Import des données impacts PLUI
+    """
+
+    INPUT = "ENTREE"
+    INSEE_FIELD = "CHAMP_INSEE"
+    LABEL_FIELD = "CHAMP_ETIQUETTE"
+    TEXT_FIELD = "CHAMP_TEXTE"
+    CODE_VALUE = "VALEUR_CODE"
+    SUB_CODE_VALUE = "VALEUR_SOUS_CODE"
+    CONNECTION_NAME = "CONNECTION_NAME"
+    SCHEMA_NETADS = "SCHEMA_NETADS"
+    COUNT_FEATURES = "COUNT_FEATURES"
+    COUNT_NEW_IMPACTS = "COUNT_NEW_IMPACTS"
+
+    def name(self):
+        return "data_impacts"
+
+    def displayName(self):
+        return "Import des impacts"
+
+    def shortHelpString(self):
+        return "Ajout des données pour les tables des impacts"
+
+    # noinspection PyMethodOverriding
+    def initAlgorithm(self, config: Dict):
+        # noinspection PyUnresolvedReferences
+        param = QgsProcessingParameterFeatureSource(
+            self.INPUT,
+            "Couche en entrée pour les impacts",
+            [QgsProcessing.TypeVectorPolygon],
+        )
+        param.setHelp("Couche vecteur qu'il faut importer dans la base de données")
+        self.addParameter(param)
+
+        # noinspection PyArgumentList
+        param = QgsProcessingParameterField(
+            self.INSEE_FIELD,
+            "Champ du code INSEE",
+            parentLayerParameterName=self.INPUT,
+            optional=True,
+        )
+        param.setHelp(
+            "Champ du code INSEE pour l'impact. Si le champ n'est pas fourni, le code INSEE proviendra "
+            "de l'intersection avec la commune."
+        )
+        self.addParameter(param)
+
+        # noinspection PyArgumentList
+        param = QgsProcessingParameterField(
+            self.LABEL_FIELD,
+            "Champ des étiquettes",
+            parentLayerParameterName=self.INPUT,
+        )
+        param.setHelp("Champ des étiquettes pour la contrainte")
+        self.addParameter(param)
+
+        # noinspection PyArgumentList
+        param = QgsProcessingParameterField(
+            self.TEXT_FIELD,
+            "Champ texte",
+            parentLayerParameterName=self.INPUT,
+        )
+        param.setHelp("Champ texte pour la contrainte")
+        self.addParameter(param)
+
+        param = QgsProcessingParameterString(
+            self.CODE_VALUE,
+            "Valeur pour le code",
+        )
+        param.setHelp(
+            "Zonage, Impacts, Servitudes, Droit de Préemption, Lotissement, ou tout autre valeur libre"
+        )
+        self.addParameter(param)
+
+        # noinspection PyArgumentList
+        param = QgsProcessingParameterString(
+            self.SUB_CODE_VALUE,
+            "Valeur pour le sous-code",
+            optional=True,
+        )
+        param.setHelp("Valeur libre")
+        self.addParameter(param)
+
+        # noinspection PyArgumentList
+        param = QgsProcessingParameterProviderConnection(
+            self.CONNECTION_NAME,
+            "Connexion PostgreSQL vers la base de données",
+            "postgres",
+            optional=False,
+            defaultValue=QgsExpressionContextUtils.globalScope().variable(
+                "netads_connection_name"
+            ),
+        )
+        param.setHelp("Base de données de destination")
+        self.addParameter(param)
+
+        # noinspection PyArgumentList
+        param = QgsProcessingParameterDatabaseSchema(
+            self.SCHEMA_NETADS,
+            "Schéma NetADS",
+            self.CONNECTION_NAME,
+            defaultValue="netads",
+            optional=False,
+        )
+        param.setHelp("Nom du schéma des données NetADS")
+        self.addParameter(param)
+
+        self.addOutput(
+            QgsProcessingOutputNumber(self.COUNT_FEATURES, "Nombre d'entités importés")
+        )
+
+        self.addOutput(
+            QgsProcessingOutputNumber(
+                self.COUNT_NEW_IMPACTS, "Nombre de nouveaux impacts"
+            )
+        )
+
+    # noinspection PyMethodOverriding
+    def checkParameterValues(self, parameters: Dict, context: QgsProcessingContext):
+        # noinspection PyArgumentList
+        metadata = QgsProviderRegistry.instance().providerMetadata("postgres")
+        connection_name = self.parameterAsConnectionName(
+            parameters, self.CONNECTION_NAME, context
+        )
+        # schema_netads = self.parameterAsSchema(
+        #     parameters, self.SCHEMA_NETADS, context
+        # )
+        # noinspection PyTypeChecker
+        connection = metadata.findConnection(connection_name)
+        connection: QgsAbstractDatabaseProviderConnection
+        if not connection:
+            raise QgsProcessingException(
+                f"La connexion {connection_name} n'existe pas."
+            )
+        # TODO faire la vérification
+        return super().checkParameterValues(parameters, context)
+
+    # noinspection PyMethodOverriding
+    def processAlgorithm(
+        self,
+        parameters: Dict,
+        context: QgsProcessingContext,
+        feedback: QgsProcessingFeedback,
+    ):
+        # noinspection PyArgumentList
+        connection_name = self.parameterAsConnectionName(
+            parameters, self.CONNECTION_NAME, context
+        )
+        schema_netads = self.parameterAsSchema(
+            parameters, self.SCHEMA_NETADS, context
+        )
+
+        # noinspection PyArgumentList
+        metadata = QgsProviderRegistry.instance().providerMetadata("postgres")
+        # noinspection PyTypeChecker
+        connection = metadata.findConnection(connection_name)
+        connection: QgsAbstractDatabaseProviderConnection
+        if not connection:
+            raise QgsProcessingException(
+                f"La connexion {connection_name} n'existe pas."
+            )
+
+        layer = self.parameterAsSource(parameters, self.INPUT, context)
+        insee_field = self.parameterAsString(parameters, self.INSEE_FIELD, context)
+        label_field = self.parameterAsString(parameters, self.LABEL_FIELD, context)
+        text_field = self.parameterAsString(parameters, self.TEXT_FIELD, context)
+        code = self.parameterAsString(parameters, self.CODE_VALUE, context)
+        sub_code = self.parameterAsString(parameters, self.SUB_CODE_VALUE, context)
+
+        if feedback.isCanceled():
+            return {self.COUNT_FEATURES: 0, self.COUNT_NEW_IMPACTS: 0}
+
+        uniques = self.unique_couple_input(feedback, label_field, layer, text_field)
+
+        connection.executeSql("BEGIN;")
+
+        existing_impacts = self.existing_impacts_in_database(
+            connection, schema_netads, code, sub_code, feedback
+        )
+
+        if feedback.isCanceled():
+            connection.executeSql("ROLLBACK;")
+            return {self.COUNT_FEATURES: 0, self.COUNT_NEW_IMPACTS: 0}
+
+        missing_in_db = list(set(uniques) - set(existing_impacts.values()))
+
+        feedback.pushInfo(
+            f"Dans le jeu de données, il y a {len(missing_in_db)} nouveau(x) impact(s) : "
+        )
+
+        self.insert_new_impacts(
+            connection,
+            existing_impacts,
+            feedback,
+            code,
+            missing_in_db,
+            schema_netads,
+            sub_code,
+        )
+
+        if feedback.isCanceled():
+            connection.executeSql("ROLLBACK;")
+            return {self.COUNT_FEATURES: 0, self.COUNT_NEW_IMPACTS: 0}
+
+        crs = self.check_current_crs(connection, schema_netads, feedback)
+        feedback.pushInfo(
+            f"La projection du schéma {schema_netads} est en EPSG:{crs}."
+        )
+
+        layer = self.prepare_data(
+            context,
+            feedback,
+            self.parameterAsLayer(parameters, self.INPUT, context),
+            QgsCoordinateReferenceSystem(f"EPSG:{crs}"),
+        )
+
+        if not insee_field:
+            feedback.pushInfo(
+                "Le champ code INSEE n'est pas renseigné, l'import des impacts va donc découper les "
+                "impacts selon les communes de la couche 'communes' dans le schéma 'netads'."
+            )
+            layer = self.split_layer_impacts(
+                context, feedback, layer, connection, schema_netads
+            )
+            insee_field = "communes_codeinsee"
+            insee_list = None
+        else:
+            feedback.pushInfo(
+                f"Le code INSEE est '{insee_field}' dans la couche {layer.name()}. L'import va utiliser la "
+                f"valeur de ce champ pour l'import."
+            )
+            sql = "SELECT codeinsee FROM netads.communes GROUP BY codeinsee;"
+            result = connection.executeSql(sql)
+            insee_list = [str(f[0]) for f in result]
+            feedback.pushDebugInfo(
+                f"Uniquement les impacts dont le code INSEE est dans la liste suivante "
+                f"{','.join(insee_list)} vont être importés car ils sont dans la table netads.communes."
+            )
+
+        if feedback.isCanceled():
+            connection.executeSql("ROLLBACK;")
+            return {self.COUNT_FEATURES: 0, self.COUNT_NEW_IMPACTS: 0}
+
+        feedback.pushInfo("Insertion des geo-impacts dans la base de données")
+        success = self.import_new_geo_impacts(
+            connection,
+            feedback,
+            insee_field,
+            insee_list,
+            label_field,
+            layer,
+            schema_netads,
+            text_field,
+            crs,
+            code,
+            sub_code,
+        )
+
+        if feedback.isCanceled():
+            connection.executeSql("ROLLBACK;")
+            return {self.COUNT_FEATURES: 0, self.COUNT_NEW_IMPACTS: 0}
+
+        connection.executeSql("COMMIT;")
+        feedback.pushInfo(
+            f"{success} nouvelles géo-impacts dans la base de données"
+        )
+        return {
+            self.COUNT_FEATURES: success,
+            self.COUNT_NEW_IMPACTS: len(missing_in_db),
+        }
+
+    @sql_error_handler
+    def split_layer_impacts(
+        self,
+        context: QgsProcessingContext,
+        feedback: QgsProcessingFeedback,
+        layer: QgsVectorLayer,
+        connection: QgsAbstractDatabaseProviderConnection,
+        schema: str,
+    ) -> Union[QgsVectorLayer, None]:
+        """Make the union between impacts and municipalities."""
+
+        uri = QgsDataSourceUri(connection.uri())
+        uri.setSchema(schema)
+        uri.setTable("communes")
+        uri.setKeyColumn("id_communes")
+        uri.setGeometryColumn("geom")
+        municipalities = QgsVectorLayer(uri.uri(), "communes", "postgres")
+
+        feedback.pushInfo("Intersection des impacts avec les communes")
+        params = {
+            "INPUT": layer,
+            "OVERLAY": municipalities,
+            "OVERLAY_FIELDS_PREFIX": "communes_",
+            "OUTPUT": "memory:",
+        }
+
+        # noinspection PyUnresolvedReferences
+        result = processing.run(
+            "native:union",
+            params,
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=True,
+        )
+
+        if feedback.isCanceled():
+            return
+
+        feedback.pushInfo("Transformation de multi vers unique de la nouvelle couche")
+        # noinspection PyUnresolvedReferences
+        result = processing.run(
+            "native:multiparttosingleparts",
+            {
+                "INPUT": result["OUTPUT"],
+                "OUTPUT": "memory:",
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=True,
+        )
+
+        if feedback.isCanceled():
+            return
+
+        feedback.pushInfo("Intersection OK des impacts avec les communes.")
+        layer = QgsProcessingUtils.mapLayerFromString(result["OUTPUT"], context, True)
+        return layer
+
+    @sql_error_handler
+    def import_new_geo_impacts(
+        self,
+        connection: QgsAbstractDatabaseProviderConnection,
+        feedback: QgsProcessingFeedback,
+        insee_field: str,
+        insee_list: list,
+        label_field: str,
+        layer: QgsVectorLayer,
+        schema: str,
+        text_field: str,
+        crs: str,
+        group: str,
+        sub_group: str,
+    ) -> int:
+        """Import in the database new geo-impacts."""
+        success = 0
+        fail = 0
+        for feature in layer.getFeatures():
+            content_label = self.clean_value(feature.attribute(label_field))
+            content_text = self.clean_value(feature.attribute(text_field))
+            insee_code = self.clean_value(feature.attribute(insee_field))
+
+            if insee_code == "":
+                feedback.pushDebugInfo(
+                    f"Omission de l'entité {feature.id()} car elle n'a pas de code INSEE."
+                )
+                fail += 1
+                continue
+
+            if insee_list and str(insee_code) not in insee_list:
+                feedback.pushDebugInfo(
+                    f"Omission de l'entité {feature.id()} car son code INSEE n'est pas dans la table "
+                    f"netads.communes"
+                )
+                fail += 1
+                continue
+
+            # noinspection PyArgumentList
+            sql = (
+                f"SELECT id_impacts "
+                f"FROM "
+                f"{schema}.impacts "
+                f"WHERE "
+                f"libelle = {QgsExpression.quotedString(content_label)} "
+                f"AND texte = {QgsExpression.quotedString(content_text)} "
+                f"AND groupe = {QgsExpression.quotedString(group)} "
+                f"AND sous_groupe = {QgsExpression.quotedString(sub_group)};"
+            )
+            # feedback.pushDebugInfo(sql)
+            result = connection.executeSql(sql)
+            if len(result) == 0:
+                # This case shouldn't happen ... it's covered before
+                feedback.reportError(
+                    f"Omission de l'entité {feature.id()} car elle n'y a pas d'impact dans la base"
+                )
+                fail += 1
+            else:
+                # Useless, but better to check
+                ids = [str(v[0]) for v in result]
+                if len(ids) > 1:
+                    feedback.reportError(
+                        f"Erreur, il y a plusieurs identifiants lors de l'exécution : {sql}"
+                    )
+                    fail += 1
+                    continue
+                else:
+                    ids = ids[0]
+
+                # noinspection PyArgumentList
+                sql = (
+                    f"INSERT INTO {schema}.geo_impacts (id_impacts, texte, codeinsee, geom) "
+                    f"VALUES ("
+                    f"'{ids}', "
+                    f"{QgsExpression.quotedString(content_text)}, "
+                    f"'{insee_code}', "
+                    f"ST_GeomFromText('{feature.geometry().asWkt()}', '{crs}')"
+                    f") RETURNING id_geo_impacts;"
+                )
+                # feedback.pushDebugInfo(sql)
+                result = connection.executeSql(sql)
+                feedback.pushDebugInfo(
+                    f"    Insertion source ID {feature.id()} → ID {result[0][0]}"
+                )
+                success += 1
+
+        if fail > 0:
+            feedback.reportError(
+                f"Veuillez lire logs ci-dessus, car il y a {fail} entités en défaut."
+            )
+
+        return success
+
+    @classmethod
+    def clean_value(cls, value: str) -> str:
+        """Replace the NULL by empty string if needed."""
+        if value == NULL:
+            value = ""
+        return value
+
+    @classmethod
+    @sql_error_handler
+    def check_current_crs(
+        cls,
+        connection: QgsAbstractDatabaseProviderConnection,
+        schema: str,
+        feedback: QgsProcessingFeedback,
+    ) -> str:
+        """The current CRS in the database"""
+        # Let's do it on communes
+        # QGIS doesn't manage well if geometry_columns is not the search_path anyway
+        sql = (
+            f"SELECT srid FROM public.geometry_columns "
+            f"WHERE f_table_schema = '{schema}' AND f_table_name = 'communes';"
+        )
+        feedback.pushInfo("Récupération du CRS de la base de données.")
+        feedback.pushDebugInfo(sql)
+        result = connection.executeSql(sql)
+        return str(result[0][0])
+
+    @staticmethod
+    def existing_impacts_in_database(
+        connection: QgsAbstractDatabaseProviderConnection,
+        schema_netads: str,
+        group: str,
+        sub_group: str,
+        feedback: QgsProcessingFeedback,
+    ):
+        """Return the list of existing constraints in database."""
+        # annotation dict[str, Tuple[str, str]], Python 3.9
+        uri = QgsDataSourceUri(connection.uri())
+        uri.setSchema(schema_netads)
+        uri.setTable("impacts")
+        uri.setKeyColumn("id_impacts")
+        existing_impacts = {}
+        existing_constraints_layer = QgsVectorLayer(
+            uri.uri(), "impacts", "postgres"
+        )
+        request = QgsFeatureRequest()
+        request.setFilterExpression(
+            f"\"groupe\" = '{group}' AND \"sous_groupe\" = '{sub_group}'"
+        )
+        for feature in existing_constraints_layer.getFeatures(request):
+            existing_impacts[feature.attribute("id_impacts")] = (
+                feature.attribute("libelle"),
+                feature.attribute("texte"),
+            )
+        feedback.pushInfo(
+            f"Il y a {len(existing_impacts)} impact(s) dans la base de données concernant le groupe "
+            f"'{group}' et le sous-groupe '{sub_group}'."
+        )
+        return existing_impacts
+
+    @staticmethod
+    @sql_error_handler
+    def insert_new_impacts(
+        connection: QgsAbstractDatabaseProviderConnection,
+        existing_impacts: Dict,
+        feedback: QgsProcessingFeedback,
+        group: str,
+        missing_in_db: List[Tuple[str, str]],
+        schema_netads: str,
+        sub_group: str,
+    ):
+        """Insert new impacts in the database and return the list of new IDs."""
+        # annotation dict[str, Tuple[str, str]] Python 3.9
+        for new in missing_in_db:
+            # Quicker, to get the impact_id with raw SQL query
+            # noinspection PyArgumentList
+            sql = (
+                f"INSERT INTO {schema_netads}.impacts (libelle, type, code, sous_code) "
+                f"VALUES ("
+                f"{QgsExpression.quotedString(new[0])}, "
+                f"{QgsExpression.quotedString(new[1])}, "
+                f"{QgsExpression.quotedString(group)}, "
+                f"{QgsExpression.quotedString(sub_group)}) "
+                f"RETURNING id_impacts;"
+            )
+            result = connection.executeSql(sql)
+            feedback.pushDebugInfo(
+                f"    Insertion dans la table 'impacts' : {new} → ID {result[0][0]}"
+            )
+            existing_impacts[result[0][0]] = (new[0], new[1])
+        return existing_impacts
+
+    @staticmethod
+    def prepare_data(
+        context: QgsProcessingContext,
+        feedback: QgsProcessingFeedback,
+        layer: QgsVectorLayer,
+        target_crs: QgsCoordinateReferenceSystem,
+    ) -> Union[QgsVectorLayer, None]:
+        """Preparing the data : fixing geometries, projection and multi."""
+        feedback.pushInfo("Correction des géométries dans la couche en entrée")
+        # noinspection PyUnresolvedReferences
+        result = processing.run(
+            "native:fixgeometries",
+            {
+                "INPUT": layer,
+                "OUTPUT": "memory:",
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=True,
+        )
+
+        if feedback.isCanceled():
+            return
+
+        feedback.pushInfo("Transformation de multi vers unique")
+        # noinspection PyUnresolvedReferences
+        result = processing.run(
+            "native:multiparttosingleparts",
+            {
+                "INPUT": result["OUTPUT"],
+                "OUTPUT": "memory:",
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=True,
+        )
+
+        if feedback.isCanceled():
+            return
+
+        feedback.pushInfo(f"Reprojection vers {target_crs.authid()}")
+        # noinspection PyUnresolvedReferences
+        result = processing.run(
+            "native:reprojectlayer",
+            {
+                "INPUT": result["OUTPUT"],
+                "TARGET_CRS": target_crs,
+                "OUTPUT": "memory:",
+            },
+            context=context,
+            feedback=feedback,
+            is_child_algorithm=True,
+        )
+
+        if feedback.isCanceled():
+            return
+
+        layer = QgsProcessingUtils.mapLayerFromString(result["OUTPUT"], context, True)
+        feedback.pushInfo("Les données sont désormais OK pour l'import.")
+        return layer
+
+    @staticmethod
+    def unique_couple_input(
+        feedback: QgsProcessingFeedback,
+        label_field: str,
+        layer: QgsProcessingFeatureSource,
+        text_field: str,
+    ) -> List[Tuple[str, str]]:
+        """Fetch unique couples in the input layer."""
+        request = QgsFeatureRequest()
+        request.setSubsetOfAttributes([label_field, text_field], layer.fields())
+        uniques = []
+        uniques_str = []
+        for feature in layer.getFeatures(request):
+
+            content_label = ImportImpactsAlg.clean_value(
+                feature.attribute(label_field)
+            )
+            content_text = ImportImpactsAlg.clean_value(
+                feature.attribute(text_field)
+            )
+
+            couple = (content_label, content_text)
+            if couple not in uniques:
+                uniques.append(couple)
+                uniques_str.append(str(couple))
+
+            if feedback.isCanceled():
+                return []
+
+        feedback.pushInfo(
+            f"Dans la source, il y a {len(uniques)} couples uniques sur le couple "
+            f"'{label_field}' : '{text_field}'"
+        )
+        feedback.pushDebugInfo(
+            f"Liste des couples uniques dans la couche : {','.join(uniques_str)}"
+        )
+
+        return uniques
