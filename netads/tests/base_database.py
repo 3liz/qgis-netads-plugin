@@ -7,7 +7,9 @@ from qgis.core import (
     QgsProviderRegistry,
 )
 
-from netads.processing_netads.provider import NetAdsProvider as ProcessingProvider
+from netads.processing_netads.provider import (
+    NetAdsProvider as ProcessingProvider,
+)
 from netads.tests.base import BaseTestProcessing
 
 __copyright__ = "Copyright 2023, 3Liz"

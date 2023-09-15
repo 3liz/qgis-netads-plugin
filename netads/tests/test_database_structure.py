@@ -20,6 +20,8 @@ __copyright__ = "Copyright 2023, 3Liz"
 __license__ = "GPL version 3"
 __email__ = "info@3liz.org"
 
+from tests.feedbacks import FeedbackPrint
+
 VERSION = "0.0.1"
 SCHEMA = "netads"
 TABLES = (
@@ -38,7 +40,7 @@ class TestProcessing(unittest.TestCase):
         self.connection: QgsAbstractDatabaseProviderConnection
         if SCHEMA in self.connection.schemas():
             self.connection.dropSchema(SCHEMA, True)
-        # self.feedback = LoggerProcessingFeedBack()
+        self.feedback = FeedbackPrint()
         self.maxDiff = None
 
     def tearDown(self) -> None:
@@ -60,7 +62,7 @@ class TestProcessing(unittest.TestCase):
             "CRS": "EPSG:2154",
         }
         alg = "{}:create_database_structure".format(provider.id())
-        results = processing.run(alg, params)
+        results = processing.run(alg, params, feedback=self.feedback)
 
         # Take the last migration
         migrations = available_migrations(000000)

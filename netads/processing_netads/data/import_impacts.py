@@ -11,7 +11,6 @@ from qgis.core import (
     QgsDataSourceUri,
     QgsExpression,
     QgsExpressionContextUtils,
-    QgsFeatureRequest,
     QgsProcessing,
     QgsProcessingContext,
     QgsProcessingException,
@@ -19,10 +18,10 @@ from qgis.core import (
     QgsProcessingFeedback,
     QgsProcessingOutputNumber,
     QgsProcessingParameterDatabaseSchema,
+    QgsProcessingParameterEnum,
     QgsProcessingParameterFeatureSource,
     QgsProcessingParameterField,
     QgsProcessingParameterProviderConnection,
-    QgsProcessingParameterString,
     QgsProcessingUtils,
     QgsProviderConnectionException,
     QgsProviderRegistry,
@@ -31,6 +30,12 @@ from qgis.core import (
 from qgis.PyQt.QtCore import NULL
 
 from netads.processing_netads.data.base import BaseDataAlgorithm
+
+LISTE_TYPE = (
+    'ZONAGE', 'SERVITUDE', 'PRESCRIPTION', 'INFORMATION',
+)
+
+# Impact = namedtuple('Impact', ['type', 'code', 'sous_code', 'etiquette', 'libelle', 'description'])
 
 
 def sql_error_handler(func: Callable):
@@ -51,12 +56,14 @@ class ImportImpactsAlg(BaseDataAlgorithm):
     Import des données impacts PLUI
     """
 
-    INPUT = "ENTREE"
-    INSEE_FIELD = "CHAMP_INSEE"
-    LABEL_FIELD = "CHAMP_ETIQUETTE"
-    TEXT_FIELD = "CHAMP_TEXTE"
-    CODE_VALUE = "VALEUR_CODE"
-    SUB_CODE_VALUE = "VALEUR_SOUS_CODE"
+    ENTREE = "ENTREE"
+    TYPE_IMPORT = "TYPE_IMPORT"
+    CHAMP_CODE = "CHAMP_CODE"
+    CHAMP_SOUS_CODE = "CHAMP_SOUS_CODE"
+    CHAMP_ETIQUETTE = "CHAMP_ETIQUETTE"
+    CHAMP_LIBELLE = "CHAMP_LIBELLE"
+    CHAMP_DESCRIPTION = "CHAMP_DESCRIPTION"
+    CHAMP_INSEE = "CHAMP_INSEE"
     CONNECTION_NAME = "CONNECTION_NAME"
     SCHEMA_NETADS = "SCHEMA_NETADS"
     COUNT_FEATURES = "COUNT_FEATURES"
@@ -69,66 +76,99 @@ class ImportImpactsAlg(BaseDataAlgorithm):
         return "Import des impacts"
 
     def shortHelpString(self):
-        return "Ajout des données pour les tables des impacts"
+        return (
+            "Ajout des données pour les tables des impacts"
+            "<br>"
+            f"Le champ pour le 'type' doit contenir exclusivement les valeurs suivantes : "
+            f"{','.join(LISTE_TYPE)}"
+        )
 
     # noinspection PyMethodOverriding
     def initAlgorithm(self, config: Dict):
         # noinspection PyUnresolvedReferences
         param = QgsProcessingParameterFeatureSource(
-            self.INPUT,
+            self.ENTREE,
             "Couche en entrée pour les impacts",
             [QgsProcessing.TypeVectorPolygon],
+            optional=False,
         )
         param.setHelp("Couche vecteur qu'il faut importer dans la base de données")
         self.addParameter(param)
 
         # noinspection PyArgumentList
-        param = QgsProcessingParameterField(
-            self.INSEE_FIELD,
-            "Champ du code INSEE",
-            parentLayerParameterName=self.INPUT,
-            optional=True,
+        param = QgsProcessingParameterEnum(
+            self.TYPE_IMPORT,
+            "Type d'import",
+            options=LISTE_TYPE,
+            optional=False,
         )
-        param.setHelp(
-            "Champ du code INSEE pour l'impact. Si le champ n'est pas fourni, le code INSEE proviendra "
-            "de l'intersection avec la commune."
-        )
+        param.setHelp("Type d'import concernant la couche")
+        param.setUsesStaticStrings(True)
         self.addParameter(param)
 
-        # noinspection PyArgumentList
         param = QgsProcessingParameterField(
-            self.LABEL_FIELD,
-            "Champ des étiquettes",
-            parentLayerParameterName=self.INPUT,
+            self.CHAMP_CODE,
+            "Champ pour le code",
+            parentLayerParameterName=self.ENTREE,
+            optional=False,
         )
-        param.setHelp("Champ des étiquettes pour la contrainte")
-        self.addParameter(param)
-
-        # noinspection PyArgumentList
-        param = QgsProcessingParameterField(
-            self.TEXT_FIELD,
-            "Champ texte",
-            parentLayerParameterName=self.INPUT,
-        )
-        param.setHelp("Champ texte pour la contrainte")
-        self.addParameter(param)
-
-        param = QgsProcessingParameterString(
-            self.CODE_VALUE,
-            "Valeur pour le code",
-        )
+        # TODO check ?
         param.setHelp(
             "Zonage, Impacts, Servitudes, Droit de Préemption, Lotissement, ou tout autre valeur libre"
         )
         self.addParameter(param)
 
         # noinspection PyArgumentList
-        param = QgsProcessingParameterString(
-            self.SUB_CODE_VALUE,
-            "Valeur pour le sous-code",
+        param = QgsProcessingParameterField(
+            self.CHAMP_SOUS_CODE,
+            "Champ pour le sous-code",
+            parentLayerParameterName=self.ENTREE,
             optional=True,
         )
         param.setHelp("Valeur libre")
+        self.addParameter(param)
+
+        # noinspection PyArgumentList
+        param = QgsProcessingParameterField(
+            self.CHAMP_ETIQUETTE,
+            "Champ des étiquettes",
+            parentLayerParameterName=self.ENTREE,
+            optional=True,
+        )
+        param.setHelp("Champ des étiquettes pour l'impact")
+        self.addParameter(param)
+
+        # noinspection PyArgumentList
+        param = QgsProcessingParameterField(
+            self.CHAMP_LIBELLE,
+            "Champ des libellés",
+            parentLayerParameterName=self.ENTREE,
+            optional=False,
+        )
+        param.setHelp("Champ des libellés pour l'impact")
+        self.addParameter(param)
+
+        # noinspection PyArgumentList
+        param = QgsProcessingParameterField(
+            self.CHAMP_DESCRIPTION,
+            "Champ des descriptions",
+            parentLayerParameterName=self.ENTREE,
+            optional=True,
+        )
+        param.setHelp("Champ des libellés pour l'impact")
+        self.addParameter(param)
+
+        # noinspection PyArgumentList
+        param = QgsProcessingParameterField(
+            self.CHAMP_INSEE,
+            "Champ du code INSEE",
+            parentLayerParameterName=self.ENTREE,
+            optional=True,
+        )
+        param.setHelp(
+            "Champ du code INSEE pour l'impact. Si le champ n'est pas fourni, le code INSEE proviendra "
+            "de l'intersection avec la commune."
+        )
         self.addParameter(param)
 
         # noinspection PyArgumentList
@@ -208,110 +248,129 @@ class ImportImpactsAlg(BaseDataAlgorithm):
                 f"La connexion {connection_name} n'existe pas."
             )
 
-        layer = self.parameterAsSource(parameters, self.INPUT, context)
-        insee_field = self.parameterAsString(parameters, self.INSEE_FIELD, context)
-        label_field = self.parameterAsString(parameters, self.LABEL_FIELD, context)
-        text_field = self.parameterAsString(parameters, self.TEXT_FIELD, context)
-        code = self.parameterAsString(parameters, self.CODE_VALUE, context)
-        sub_code = self.parameterAsString(parameters, self.SUB_CODE_VALUE, context)
+        couche_entree = self.parameterAsSource(parameters, self.ENTREE, context)
+        import_type = self.parameterAsEnumString(parameters, self.TYPE_IMPORT, context)
+        champ_code = self.parameterAsString(parameters, self.CHAMP_CODE, context)
+        champ_sous_code = self.parameterAsString(parameters, self.CHAMP_SOUS_CODE, context)
+        champ_etiquette = self.parameterAsString(parameters, self.CHAMP_ETIQUETTE, context)
+        champ_libelle = self.parameterAsString(parameters, self.CHAMP_LIBELLE, context)
+        champ_description = self.parameterAsString(parameters, self.CHAMP_DESCRIPTION, context)
+        champ_insee = self.parameterAsString(parameters, self.CHAMP_INSEE, context)
+
+        results = {
+            self.COUNT_FEATURES: 0,
+            self.COUNT_NEW_IMPACTS: 0,
+        }
 
         if feedback.isCanceled():
-            return {self.COUNT_FEATURES: 0, self.COUNT_NEW_IMPACTS: 0}
+            return results
 
-        uniques = self.unique_couple_input(feedback, label_field, layer, text_field)
+        uniques = self.unique_couple_input(
+            feedback,
+            import_type,
+            champ_code,
+            champ_sous_code,
+            champ_etiquette,
+            champ_libelle,
+            champ_description,
+            couche_entree,
+        )
+        # uniques :
 
         connection.executeSql("BEGIN;")
 
-        existing_impacts = self.existing_impacts_in_database(
-            connection, schema_netads, code, sub_code, feedback
-        )
+        existing_impacts = self.existing_impacts_in_database(connection, schema_netads, feedback)
 
         if feedback.isCanceled():
             connection.executeSql("ROLLBACK;")
-            return {self.COUNT_FEATURES: 0, self.COUNT_NEW_IMPACTS: 0}
+            return results
 
         missing_in_db = list(set(uniques) - set(existing_impacts.values()))
 
         feedback.pushInfo(
-            f"Dans le jeu de données, il y a {len(missing_in_db)} nouveau(x) impact(s) : "
+            f"Dans le jeu de données, il y a {len(missing_in_db)} nouveau(x) impact(s) par rapport à la "
+            f"base: "
         )
 
         self.insert_new_impacts(
             connection,
             existing_impacts,
             feedback,
-            code,
             missing_in_db,
             schema_netads,
-            sub_code,
         )
 
         if feedback.isCanceled():
             connection.executeSql("ROLLBACK;")
-            return {self.COUNT_FEATURES: 0, self.COUNT_NEW_IMPACTS: 0}
+            return results
 
         crs = self.check_current_crs(connection, schema_netads, feedback)
         feedback.pushInfo(f"La projection du schéma {schema_netads} est en EPSG:{crs}.")
 
-        layer = self.prepare_data(
+        couche_entree = self.prepare_data(
             context,
             feedback,
-            self.parameterAsLayer(parameters, self.INPUT, context),
+            self.parameterAsLayer(parameters, self.ENTREE, context),
             QgsCoordinateReferenceSystem(f"EPSG:{crs}"),
         )
+        if feedback.isCanceled():
+            connection.executeSql("ROLLBACK;")
+            return results
 
-        if not insee_field:
+        if not champ_insee:
             feedback.pushInfo(
                 "Le champ code INSEE n'est pas renseigné, l'import des impacts va donc découper les "
-                "impacts selon les communes de la couche 'communes' dans le schéma 'netads'."
+                f"impacts selon les communes de la couche 'communes' dans le schéma '{schema_netads}'."
             )
-            layer = self.split_layer_impacts(
-                context, feedback, layer, connection, schema_netads
+            couche_entree = self.split_layer_impacts(
+                context, feedback, couche_entree, connection, schema_netads
             )
-            insee_field = "communes_codeinsee"
+            champ_insee = "communes_codeinsee"
             insee_list = None
         else:
             feedback.pushInfo(
-                f"Le code INSEE est '{insee_field}' dans la couche {layer.name()}. L'import va utiliser la "
-                f"valeur de ce champ pour l'import."
+                f"Le code INSEE est '{champ_insee}' dans la couche {couche_entree.name()}. L'import va "
+                f"utiliser la valeur de ce champ pour l'import."
             )
-            sql = "SELECT codeinsee FROM netads.communes GROUP BY codeinsee;"
+            sql = f"SELECT codeinsee FROM {schema_netads}.communes GROUP BY codeinsee;"
             result = connection.executeSql(sql)
             insee_list = [str(f[0]) for f in result]
             feedback.pushDebugInfo(
                 f"Uniquement les impacts dont le code INSEE est dans la liste suivante "
-                f"{','.join(insee_list)} vont être importés car ils sont dans la table netads.communes."
+                f"{','.join(insee_list)} vont être importés car ils sont dans la table "
+                f"{schema_netads}.communes."
             )
 
         if feedback.isCanceled():
             connection.executeSql("ROLLBACK;")
-            return {self.COUNT_FEATURES: 0, self.COUNT_NEW_IMPACTS: 0}
+            return results
 
         feedback.pushInfo("Insertion des geo-impacts dans la base de données")
         success = self.import_new_geo_impacts(
             connection,
             feedback,
-            insee_field,
+            import_type,
+            champ_insee,
             insee_list,
-            label_field,
-            layer,
+            champ_code,
+            champ_sous_code,
+            champ_etiquette,
+            champ_libelle,
+            champ_description,
+            couche_entree,
             schema_netads,
-            text_field,
             crs,
-            code,
-            sub_code,
         )
 
         if feedback.isCanceled():
             connection.executeSql("ROLLBACK;")
-            return {self.COUNT_FEATURES: 0, self.COUNT_NEW_IMPACTS: 0}
+            return results
 
         connection.executeSql("COMMIT;")
         feedback.pushInfo(f"{success} nouvelles géo-impacts dans la base de données")
-        return {
-            self.COUNT_FEATURES: success,
-            self.COUNT_NEW_IMPACTS: len(missing_in_db),
-        }
+        results[self.COUNT_FEATURES] = success
+        results[self.COUNT_NEW_IMPACTS] = len(missing_in_db)
+        return results
 
     @sql_error_handler
     def split_layer_impacts(
@@ -376,23 +435,25 @@ class ImportImpactsAlg(BaseDataAlgorithm):
         self,
         connection: QgsAbstractDatabaseProviderConnection,
         feedback: QgsProcessingFeedback,
-        insee_field: str,
+        import_type: str,
+        champ_insee: str,
         insee_list: list,
-        label_field: str,
+        champ_code: str,
+        champ_sous_code: str,
+        champ_etiquette: str,
+        champ_libelle: str,
+        champ_description: str,
         layer: QgsVectorLayer,
         schema: str,
-        text_field: str,
         crs: str,
-        group: str,
-        sub_group: str,
     ) -> int:
         """Import in the database new geo-impacts."""
         success = 0
         fail = 0
         for feature in layer.getFeatures():
-            content_label = self.clean_value(feature.attribute(label_field))
-            content_text = self.clean_value(feature.attribute(text_field))
-            insee_code = self.clean_value(feature.attribute(insee_field))
+            content_code = self.clean_value(feature.attribute(champ_code))
+            content_libelle = self.clean_value(feature.attribute(champ_libelle))
+            insee_code = self.clean_value(feature.attribute(champ_insee))
 
             if insee_code == "":
                 feedback.pushDebugInfo(
@@ -415,11 +476,23 @@ class ImportImpactsAlg(BaseDataAlgorithm):
                 f"FROM "
                 f"{schema}.impacts "
                 f"WHERE "
-                f"libelle = {QgsExpression.quotedString(content_label)} "
-                f"AND texte = {QgsExpression.quotedString(content_text)} "
-                f"AND groupe = {QgsExpression.quotedString(group)} "
-                f"AND sous_groupe = {QgsExpression.quotedString(sub_group)};"
+                f"type = {QgsExpression.quotedString(import_type)} "
+                f"AND code = {QgsExpression.quotedString(content_code)} "
+                f"AND libelle = {QgsExpression.quotedString(content_libelle)} "
             )
+            if champ_sous_code:
+                content_sous_code = self.clean_value(feature.attribute(champ_sous_code))
+                sql += f"AND sous_code = {QgsExpression.quotedString(content_sous_code)} "
+
+            if champ_etiquette:
+                content_etiquette = self.clean_value(feature.attribute(champ_etiquette))
+                f"AND etiquette = {QgsExpression.quotedString(content_etiquette)} "
+
+            if champ_description:
+                content_description = self.clean_value(feature.attribute(champ_description))
+                sql += f"AND description = {QgsExpression.quotedString(content_description)}"
+
+            sql += ';'
             # feedback.pushDebugInfo(sql)
             result = connection.executeSql(sql)
             if len(result) == 0:
@@ -442,10 +515,10 @@ class ImportImpactsAlg(BaseDataAlgorithm):
 
                 # noinspection PyArgumentList
                 sql = (
-                    f"INSERT INTO {schema}.geo_impacts (id_impacts, texte, codeinsee, geom) "
+                    f"INSERT INTO {schema}.geo_impacts (id_impacts, libelle, codeinsee, geom) "
                     f"VALUES ("
                     f"'{ids}', "
-                    f"{QgsExpression.quotedString(content_text)}, "
+                    # f"{QgsExpression.quotedString(content_text)}, "
                     f"'{insee_code}', "
                     f"ST_GeomFromText('{feature.geometry().asWkt()}', '{crs}')"
                     f") RETURNING id_geo_impacts;"
@@ -453,7 +526,7 @@ class ImportImpactsAlg(BaseDataAlgorithm):
                 # feedback.pushDebugInfo(sql)
                 result = connection.executeSql(sql)
                 feedback.pushDebugInfo(
-                    f"    Insertion source ID {feature.id()} → ID {result[0][0]}"
+                    f"    Insertion source ID {result[0][0]} → {feature.id()}"
                 )
                 success += 1
 
@@ -495,31 +568,25 @@ class ImportImpactsAlg(BaseDataAlgorithm):
     def existing_impacts_in_database(
         connection: QgsAbstractDatabaseProviderConnection,
         schema_netads: str,
-        group: str,
-        sub_group: str,
         feedback: QgsProcessingFeedback,
-    ):
-        """Return the list of existing constraints in database."""
-        # annotation dict[str, Tuple[str, str]], Python 3.9
+    ) -> dict[str, Tuple[str, str, str, str, str, str]]:
+        """Return the list of existing impacts in database."""
         uri = QgsDataSourceUri(connection.uri())
         uri.setSchema(schema_netads)
         uri.setTable("impacts")
         uri.setKeyColumn("id_impacts")
         existing_impacts = {}
         existing_constraints_layer = QgsVectorLayer(uri.uri(), "impacts", "postgres")
-        request = QgsFeatureRequest()
-        request.setFilterExpression(
-            f"\"groupe\" = '{group}' AND \"sous_groupe\" = '{sub_group}'"
-        )
-        for feature in existing_constraints_layer.getFeatures(request):
+        for feature in existing_constraints_layer.getFeatures():
             existing_impacts[feature.attribute("id_impacts")] = (
-                feature.attribute("libelle"),
-                feature.attribute("texte"),
+                feature['type'],
+                feature['code'],
+                feature['sous_code'],
+                feature['etiquette'],
+                feature['libelle'],
+                feature['description'],
             )
-        feedback.pushInfo(
-            f"Il y a {len(existing_impacts)} impact(s) dans la base de données concernant le groupe "
-            f"'{group}' et le sous-groupe '{sub_group}'."
-        )
+        feedback.pushInfo(f"Il y a {len(existing_impacts)} impact(s) dans la base de données.")
         return existing_impacts
 
     @staticmethod
@@ -528,30 +595,32 @@ class ImportImpactsAlg(BaseDataAlgorithm):
         connection: QgsAbstractDatabaseProviderConnection,
         existing_impacts: Dict,
         feedback: QgsProcessingFeedback,
-        group: str,
-        missing_in_db: List[Tuple[str, str]],
+        missing_in_db: List[Tuple[str, str, str, str, str, str]],
         schema_netads: str,
-        sub_group: str,
-    ):
+    ) -> dict[str, Tuple[str, str, str, str, str, str]]:
         """Insert new impacts in the database and return the list of new IDs."""
-        # annotation dict[str, Tuple[str, str]] Python 3.9
+        # Input import_type, contenu_code, contenu_sous_code, contenu_etiquette,
+        # contenu_libelle, contenu_description
         for new in missing_in_db:
             # Quicker, to get the impact_id with raw SQL query
             # noinspection PyArgumentList
             sql = (
-                f"INSERT INTO {schema_netads}.impacts (libelle, type, code, sous_code) "
+                f"INSERT INTO {schema_netads}.impacts "
+                f"(type, code, sous_code, etiquette, libelle, description) "
                 f"VALUES ("
                 f"{QgsExpression.quotedString(new[0])}, "
                 f"{QgsExpression.quotedString(new[1])}, "
-                f"{QgsExpression.quotedString(group)}, "
-                f"{QgsExpression.quotedString(sub_group)}) "
+                f"{QgsExpression.quotedString(new[2])}, "
+                f"{QgsExpression.quotedString(new[3])}, "
+                f"{QgsExpression.quotedString(new[4])}, "
+                f"{QgsExpression.quotedString(new[5])}) "
                 f"RETURNING id_impacts;"
             )
             result = connection.executeSql(sql)
             feedback.pushDebugInfo(
-                f"    Insertion dans la table 'impacts' : {new} → ID {result[0][0]}"
+                f"    Insertion dans la table 'impacts' : ID {result[0][0]} → {new}"
             )
-            existing_impacts[result[0][0]] = (new[0], new[1])
+            existing_impacts[result[0][0]] = (new[0], new[1], new[2], new[3], new[4], new[5])
         return existing_impacts
 
     @staticmethod
@@ -616,22 +685,38 @@ class ImportImpactsAlg(BaseDataAlgorithm):
         return layer
 
     @staticmethod
-    def unique_couple_input(
+    def unique_couple_input(  # noqa: C901
         feedback: QgsProcessingFeedback,
-        label_field: str,
+        import_type: str,
+        champ_code: str,
+        champ_sous_code: str,
+        champ_etiquette: str,
+        champ_libelle: str,
+        champ_description: str,
         layer: QgsProcessingFeatureSource,
-        text_field: str,
-    ) -> List[Tuple[str, str]]:
+    ) -> List[Tuple[str, str, str, str, str, str]]:
         """Fetch unique couples in the input layer."""
-        request = QgsFeatureRequest()
-        request.setSubsetOfAttributes([label_field, text_field], layer.fields())
         uniques = []
         uniques_str = []
-        for feature in layer.getFeatures(request):
-            content_label = ImportImpactsAlg.clean_value(feature.attribute(label_field))
-            content_text = ImportImpactsAlg.clean_value(feature.attribute(text_field))
+        for feature in layer.getFeatures():
+            # Optional inputs
+            contenu_sous_code = ''
+            contenu_etiquette = ''
+            contenu_description = ''
 
-            couple = (content_label, content_text)
+            contenu_code = ImportImpactsAlg.clean_value(feature[champ_code])
+            if champ_sous_code:
+                contenu_sous_code = ImportImpactsAlg.clean_value(feature[champ_sous_code])
+            if champ_etiquette:
+                contenu_etiquette = ImportImpactsAlg.clean_value(feature[champ_etiquette])
+            contenu_libelle = ImportImpactsAlg.clean_value(feature[champ_libelle])
+            if champ_description:
+                contenu_description = ImportImpactsAlg.clean_value(feature[champ_description])
+
+            couple = (
+                import_type, contenu_code, contenu_sous_code, contenu_etiquette, contenu_libelle,
+                contenu_description
+            )
             if couple not in uniques:
                 uniques.append(couple)
                 uniques_str.append(str(couple))
@@ -639,10 +724,22 @@ class ImportImpactsAlg(BaseDataAlgorithm):
             if feedback.isCanceled():
                 return []
 
+        couple = [champ_code, champ_sous_code, champ_etiquette, champ_libelle, champ_description]
+        # To remove empty variables, all fields are not required
+        couple = [f for f in couple if f]
         feedback.pushInfo(
-            f"Dans la source, il y a {len(uniques)} couples uniques sur le couple "
-            f"'{label_field}' : '{text_field}'"
+            f"Dans la source, il y a {len(uniques)} couples uniques sur le couple : {','.join(couple)}"
         )
+        if len(couple) != 5:
+            feedback.pushInfo(
+                "Étant donné que certain(s) champ(s) est/sont vide(s) dans lors du lancement de "
+                "l'algorithme :")
+            if not champ_sous_code:
+                feedback.pushInfo("⚫ Sous-code")
+            if not champ_etiquette:
+                feedback.pushInfo("⚫ Étiquette")
+            if not champ_sous_code:
+                feedback.pushInfo("⚫ Description")
         feedback.pushDebugInfo(
             f"Liste des couples uniques dans la couche : {','.join(uniques_str)}"
         )
