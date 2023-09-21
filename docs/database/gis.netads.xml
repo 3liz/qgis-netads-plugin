@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><database name="gis" schema="netads" type="PostgreSQL - 15.4 (Debian 15.4-1.pgdg110+1)">
+<?xml version="1.0" encoding="UTF-8"?><database name="gis" schema="netads" type="PostgreSQL - 15.4 (Debian 15.4-2.pgdg110+1)">
    <sequences>
       <sequence increment="1" name="communes_id_communes_seq" startValue="1"/>
       <sequence increment="1" name="geo_impacts_id_geo_impacts_seq" startValue="1"/>
