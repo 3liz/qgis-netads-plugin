@@ -10,6 +10,8 @@ site_dir: build
 
 nav:
     - Accueil: index.md
+    - Guide utilisateur:
+        - 'Installation': 'user-guide/installation.md'
     - Changelog: changelog.md
     - Contribution: contributing.md
     - Processing: processing/README.md
