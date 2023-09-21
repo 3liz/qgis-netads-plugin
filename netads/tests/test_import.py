@@ -4,6 +4,7 @@ __email__ = "info@3liz.org"
 
 import os
 import time
+import unittest
 
 from unittest import main
 
@@ -34,6 +35,7 @@ class TestImport(DatabaseTestCase):
         del self.connection
         time.sleep(1)
 
+    @unittest.skip
     def test_import_impacts(self):
         """Test to import impacts in the database."""
         params = {

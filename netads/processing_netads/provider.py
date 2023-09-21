@@ -6,7 +6,8 @@ from qgis.core import QgsProcessingProvider
 from qgis.PyQt.QtGui import QIcon
 
 from netads.processing_netads.data.import_communes import ImportCommunesAlg
-from netads.processing_netads.data.import_impacts import ImportImpactsAlg
+
+# from netads.processing_netads.data.import_impacts import ImportImpactsAlg
 from netads.processing_netads.data.import_parcelles import ImportParcellesAlg
 from netads.processing_netads.data.load_layers import LoadLayersAlgorithm
 from netads.processing_netads.database.create import CreateDatabaseStructure
@@ -21,7 +22,7 @@ class NetAdsProvider(QgsProcessingProvider):
         self.addAlgorithm(UpgradeDatabaseStructure())
         # Data
         self.addAlgorithm(ImportCommunesAlg())
-        self.addAlgorithm(ImportImpactsAlg())
+        # self.addAlgorithm(ImportImpactsAlg())
         self.addAlgorithm(ImportParcellesAlg())
         self.addAlgorithm(LoadLayersAlgorithm())
 
