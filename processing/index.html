@@ -12,14 +12,14 @@
         <meta name="author" content="3Liz">
       
       
-        <link rel="canonical" href="https://docs.3liz.org/qgis-netads-plugin/contributing/">
+        <link rel="canonical" href="https://docs.3liz.org/qgis-netads-plugin/processing/">
       
       <link rel="icon" href="../media/logo.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-8.5.10">
     
     
       
-        <title>Contribution - NetADS</title>
+        <title>Processing - NetADS</title>
       
     
     
@@ -68,7 +68,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#guide-de-contribution" class="md-skip">
+        <a href="#processing" class="md-skip">
           Aller au contenu
         </a>
       
@@ -102,7 +102,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Contribution
+              Processing
             
           </span>
         </div>
@@ -208,12 +208,10 @@
         
   
   
-    
-  
 
 
   <li class="md-tabs__item">
-    <a href="./" class="md-tabs__link md-tabs__link--active">
+    <a href="../contributing/" class="md-tabs__link">
       Contribution
     </a>
   </li>
@@ -222,10 +220,12 @@
         
   
   
+    
+  
 
 
   <li class="md-tabs__item">
-    <a href="../processing/" class="md-tabs__link">
+    <a href="./" class="md-tabs__link md-tabs__link--active">
       Processing
     </a>
   </li>
@@ -378,6 +378,21 @@
 
   
   
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        Contribution
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
     
   
   
@@ -390,12 +405,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Contribution
+          Processing
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Contribution
+        Processing
       </a>
       
         
@@ -414,23 +429,136 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#pre-commit" class="md-nav__link">
-    Pre-commit
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tests" class="md-nav__link">
-    Tests
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#base-de-donnees" class="md-nav__link">
     Base de données
   </a>
+  
+    <nav class="md-nav" aria-label="Base de données">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installation-de-la-base-de-donnees" class="md-nav__link">
+    Installation de la base de données
+  </a>
+  
+    <nav class="md-nav" aria-label="Installation de la base de données">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outputs" class="md-nav__link">
+    Outputs
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mise-a-jour-de-la-base-de-donnees" class="md-nav__link">
+    Mise à jour de la base de données
+  </a>
+  
+    <nav class="md-nav" aria-label="Mise à jour de la base de données">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outputs_1" class="md-nav__link">
+    Outputs
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#import-des-donnees" class="md-nav__link">
+    Import des données
+  </a>
+  
+    <nav class="md-nav" aria-label="Import des données">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#import-des-communes" class="md-nav__link">
+    Import des communes
+  </a>
+  
+    <nav class="md-nav" aria-label="Import des communes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_2" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outputs_2" class="md-nav__link">
+    Outputs
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chargement-des-couches-depuis-la-base" class="md-nav__link">
+    Chargement des couches depuis la base
+  </a>
+  
+    <nav class="md-nav" aria-label="Chargement des couches depuis la base">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_3" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outputs_3" class="md-nav__link">
+    Outputs
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -438,21 +566,6 @@
   
 </nav>
       
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../processing/" class="md-nav__link">
-        Processing
-      </a>
     </li>
   
 
@@ -501,23 +614,136 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#pre-commit" class="md-nav__link">
-    Pre-commit
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tests" class="md-nav__link">
-    Tests
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#base-de-donnees" class="md-nav__link">
     Base de données
   </a>
+  
+    <nav class="md-nav" aria-label="Base de données">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#installation-de-la-base-de-donnees" class="md-nav__link">
+    Installation de la base de données
+  </a>
+  
+    <nav class="md-nav" aria-label="Installation de la base de données">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outputs" class="md-nav__link">
+    Outputs
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mise-a-jour-de-la-base-de-donnees" class="md-nav__link">
+    Mise à jour de la base de données
+  </a>
+  
+    <nav class="md-nav" aria-label="Mise à jour de la base de données">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_1" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outputs_1" class="md-nav__link">
+    Outputs
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#import-des-donnees" class="md-nav__link">
+    Import des données
+  </a>
+  
+    <nav class="md-nav" aria-label="Import des données">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#import-des-communes" class="md-nav__link">
+    Import des communes
+  </a>
+  
+    <nav class="md-nav" aria-label="Import des communes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_2" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outputs_2" class="md-nav__link">
+    Outputs
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chargement-des-couches-depuis-la-base" class="md-nav__link">
+    Chargement des couches depuis la base
+  </a>
+  
+    <nav class="md-nav" aria-label="Chargement des couches depuis la base">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_3" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outputs_3" class="md-nav__link">
+    Outputs
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -535,53 +761,316 @@
                 
                   
 
-  <a href="https://github.com/3liz/qgis-netads-plugin/edit/master/docs/contributing.md" title="Editer cette page" class="md-content__button md-icon">
+  <a href="https://github.com/3liz/qgis-netads-plugin/edit/master/docs/processing/README.md" title="Editer cette page" class="md-content__button md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
 
 
-<!--
-The file CONTRIBUTING.md is copied by the CI before building the doc in this directory
-On your local, make a symlink with ln -s
--->
-
-<h1 id="guide-de-contribution">Guide de contribution<a class="headerlink" href="#guide-de-contribution" title="Permanent link">#</a></h1>
-<h2 id="pre-commit">Pre-commit<a class="headerlink" href="#pre-commit" title="Permanent link">#</a></h2>
-<p>Ce projet utilise l'outil <a href="https://pre-commit.com/">pre-commit</a>.</p>
-<p>De préférence dans Python venv :</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span></pre></div></td><td class="code"><div><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements/dev.txt
-pre-commit<span class="w"> </span>install
-</code></pre></div></td></tr></table></div>
-<h2 id="tests">Tests<a class="headerlink" href="#tests" title="Permanent link">#</a></h2>
-<p>Soit avec Docker dans le MakeFile
-ou alors avec un QGIS/Postgis local</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">QGIS_CUSTOM_CONFIG_PATH</span><span class="o">=</span><span class="s2">&quot;/home/etienne/.local/share/QGIS/QGIS3/profiles/default&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">TEST_QGIS_CONNEXION_NAME</span><span class="o">=</span><span class="s2">&quot;qgistest&quot;</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">QGIS_PREFIX_PATH</span><span class="o">=</span>/home/etienne/dev/app/qgis-master
-<span class="nb">export</span><span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span><span class="nv">$PYTHONPATH</span>:/usr/lib/python3/dist-packages/:/home/etienne/dev/app/qgis-master/share/qgis/python/plugins/
-pytest
-</code></pre></div></td></tr></table></div>
+<h1 id="processing">Processing<a class="headerlink" href="#processing" title="Permanent link">#</a></h1>
 <h2 id="base-de-donnees">Base de données<a class="headerlink" href="#base-de-donnees" title="Permanent link">#</a></h2>
-<p>Sur une nouvelle base de données, si vous souhaitez installer la base de données avec les migrations :</p>
-<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kn">import</span> <span class="nn">os</span>
-<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;TEST_DATABASE_INSTALL_NETADS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;0.1.0&#39;</span>  <span class="c1"># Enable</span>
-<span class="k">del</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;TEST_DATABASE_INSTALL_NETADS&#39;</span><span class="p">]</span>  <span class="c1"># Disable</span>
-</code></pre></div></td></tr></table></div>
+<h3 id="installation-de-la-base-de-donnees">Installation de la base de données<a class="headerlink" href="#installation-de-la-base-de-donnees" title="Permanent link">#</a></h3>
+<p>Création de la structure de la base données. </p>
+<p><img alt="algo_id" src="netads-create_database_structure.jpg" /></p>
+<h4 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">ID</th>
+<th style="text-align: center;">Description</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Info</th>
+<th style="text-align: center;">Required</th>
+<th style="text-align: center;">Advanced</th>
+<th style="text-align: center;">Option</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">CONNECTION_NAME</td>
+<td style="text-align: center;">Connexion PostgreSQL vers la base de données</td>
+<td style="text-align: center;">ProviderConnection</td>
+<td style="text-align: center;">Nom de la connexion dans QGIS pour se connecter à la base de données</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">CRS</td>
+<td style="text-align: center;">Projection</td>
+<td style="text-align: center;">Crs</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">Default: EPSG:2154 <br></td>
+</tr>
+<tr>
+<td style="text-align: center;">OVERRIDE</td>
+<td style="text-align: center;">Écraser le schéma netads ? ** ATTENTION ** Cela supprimera toutes les données !</td>
+<td style="text-align: center;">Boolean</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<h4 id="outputs">Outputs<a class="headerlink" href="#outputs" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">ID</th>
+<th style="text-align: center;">Description</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Info</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">DATABASE_VERSION</td>
+<td style="text-align: center;">Version de la base de données</td>
+<td style="text-align: center;">String</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="mise-a-jour-de-la-base-de-donnees">Mise à jour de la base de données<a class="headerlink" href="#mise-a-jour-de-la-base-de-donnees" title="Permanent link">#</a></h3>
+<p>Mise à jour de la structure de la base données. </p>
+<p><img alt="algo_id" src="netads-upgrade_database_structure.jpg" /></p>
+<h4 id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">ID</th>
+<th style="text-align: center;">Description</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Info</th>
+<th style="text-align: center;">Required</th>
+<th style="text-align: center;">Advanced</th>
+<th style="text-align: center;">Option</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">CONNECTION_NAME</td>
+<td style="text-align: center;">Connexion PostgreSQL vers la base de données</td>
+<td style="text-align: center;">ProviderConnection</td>
+<td style="text-align: center;">Nom de la connexion dans QGIS pour se connecter à la base de données</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">CRS</td>
+<td style="text-align: center;">Projection</td>
+<td style="text-align: center;">Crs</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">Default: EPSG:2154 <br></td>
+</tr>
+<tr>
+<td style="text-align: center;">RUN_MIGRATIONS</td>
+<td style="text-align: center;">Cocher cette option pour lancer la mise-à-jour.</td>
+<td style="text-align: center;">Boolean</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<h4 id="outputs_1">Outputs<a class="headerlink" href="#outputs_1" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">ID</th>
+<th style="text-align: center;">Description</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Info</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">OUTPUT_STATUS</td>
+<td style="text-align: center;">Output status</td>
+<td style="text-align: center;">Number</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">OUTPUT_STRING</td>
+<td style="text-align: center;">Output message</td>
+<td style="text-align: center;">String</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="import-des-donnees">Import des données<a class="headerlink" href="#import-des-donnees" title="Permanent link">#</a></h2>
+<h3 id="import-des-communes">Import des communes<a class="headerlink" href="#import-des-communes" title="Permanent link">#</a></h3>
+<p>Ajout des données pour la table communes</p>
+<p><img alt="algo_id" src="netads-data_commune.jpg" /></p>
+<h4 id="parameters_2">Parameters<a class="headerlink" href="#parameters_2" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">ID</th>
+<th style="text-align: center;">Description</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Info</th>
+<th style="text-align: center;">Required</th>
+<th style="text-align: center;">Advanced</th>
+<th style="text-align: center;">Option</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">CONNECTION_NAME</td>
+<td style="text-align: center;">Connexion PostgreSQL vers la base de données</td>
+<td style="text-align: center;">ProviderConnection</td>
+<td style="text-align: center;">Base de données de destination</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">SCHEMA_CADASTRE</td>
+<td style="text-align: center;">Schéma Cadastre</td>
+<td style="text-align: center;">DatabaseSchema</td>
+<td style="text-align: center;">Nom du schéma des données cadastre</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">Default: cadastre <br></td>
+</tr>
+<tr>
+<td style="text-align: center;">SCHEMA_NETADS</td>
+<td style="text-align: center;">Schéma NetADS</td>
+<td style="text-align: center;">DatabaseSchema</td>
+<td style="text-align: center;">Nom du schéma des données NetADS</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">Default: netads <br></td>
+</tr>
+<tr>
+<td style="text-align: center;">TRUNCATE_PARCELLES</td>
+<td style="text-align: center;">Mise à jour de la table communes</td>
+<td style="text-align: center;">Boolean</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">IMPORT_PROJECT_LAYER</td>
+<td style="text-align: center;">Importer la couche dans le projet</td>
+<td style="text-align: center;">Boolean</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<h4 id="outputs_2">Outputs<a class="headerlink" href="#outputs_2" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">ID</th>
+<th style="text-align: center;">Description</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Info</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">OUTPUT</td>
+<td style="text-align: center;">Couches de sortie</td>
+<td style="text-align: center;">MultipleLayers</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">OUTPUT MSG</td>
+<td style="text-align: center;">Message de sortie</td>
+<td style="text-align: center;">String</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="chargement-des-couches-depuis-la-base">Chargement des couches depuis la base<a class="headerlink" href="#chargement-des-couches-depuis-la-base" title="Permanent link">#</a></h3>
+<p>Charger les couches de la base de données.</p>
+<p><img alt="algo_id" src="netads-load_layers.jpg" /></p>
+<h4 id="parameters_3">Parameters<a class="headerlink" href="#parameters_3" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">ID</th>
+<th style="text-align: center;">Description</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Info</th>
+<th style="text-align: center;">Required</th>
+<th style="text-align: center;">Advanced</th>
+<th style="text-align: center;">Option</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">CONNECTION_NAME</td>
+<td style="text-align: center;">Connexion PostgreSQL vers la base de données</td>
+<td style="text-align: center;">ProviderConnection</td>
+<td style="text-align: center;">Base de données où sont stockés les données</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">SCHEMA</td>
+<td style="text-align: center;">Schéma</td>
+<td style="text-align: center;">DatabaseSchema</td>
+<td style="text-align: center;">Nom du schéma des données netads</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">Default: netads <br></td>
+</tr>
+<tr>
+<td style="text-align: center;">CODE_CLIENT</td>
+<td style="text-align: center;">Code client NetADS</td>
+<td style="text-align: center;">String</td>
+<td style="text-align: center;">Code client NetADS attribué à la collectivité</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<h4 id="outputs_3">Outputs<a class="headerlink" href="#outputs_3" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">ID</th>
+<th style="text-align: center;">Description</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Info</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">OUTPUT</td>
+<td style="text-align: center;">Couches de sortie</td>
+<td style="text-align: center;">MultipleLayers</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<hr />
 
   <hr>
 <div class="md-source-file">
   <small>
     
       Dernière mise à jour:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 12, 2023</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">August 31, 2023</span>
       
     
   </small>
@@ -615,7 +1104,7 @@ pytest
     <nav class="md-footer__inner md-grid" aria-label="Pied de page" >
       
         
-        <a href="../changelog/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: Changelog" rel="prev">
+        <a href="../contributing/" class="md-footer__link md-footer__link--prev" aria-label="Précédent: Contribution" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -624,20 +1113,20 @@ pytest
               <span class="md-footer__direction">
                 Précédent
               </span>
-              Changelog
+              Contribution
             </div>
           </div>
         </a>
       
       
         
-        <a href="../processing/" class="md-footer__link md-footer__link--next" aria-label="Suivant: Processing" rel="next">
+        <a href="../database/" class="md-footer__link md-footer__link--next" aria-label="Suivant: Database" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Suivant
               </span>
-              Processing
+              Database
             </div>
           </div>
           <div class="md-footer__button md-icon">
