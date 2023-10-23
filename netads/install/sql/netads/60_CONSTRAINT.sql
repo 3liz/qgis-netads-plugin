@@ -34,6 +34,11 @@ ALTER TABLE ONLY netads.impacts
     ADD CONSTRAINT impacts_pkey PRIMARY KEY (id_impacts);
 
 
+-- parcelles parcelles_ident_unique
+ALTER TABLE ONLY netads.parcelles
+    ADD CONSTRAINT parcelles_ident_unique UNIQUE (ident);
+
+
 -- parcelles parcelles_pkey
 ALTER TABLE ONLY netads.parcelles
     ADD CONSTRAINT parcelles_pkey PRIMARY KEY (id_parcelles);
