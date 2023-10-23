@@ -20,6 +20,11 @@ from qgis.core import (
 from netads.processing_netads.data.base import BaseDataAlgorithm
 
 
+class Key:
+    Code = "netads_idclient"
+    Prefix = "netads_prefix_parcelle"
+
+
 class LoadLayersAlgorithm(BaseDataAlgorithm):
     """
     Chargement des couches netads depuis la base de données
@@ -28,9 +33,8 @@ class LoadLayersAlgorithm(BaseDataAlgorithm):
     CONNECTION_NAME = "CONNECTION_NAME"
     SCHEMA = "SCHEMA"
     CODE_CLIENT = "CODE_CLIENT"
+    PREFIX_PARCELLE = "PREFIX_PARCELLE"
     OUTPUT = "OUTPUT"
-
-    KEY = "netads_idclient"
 
     def name(self):
         return "load_layers"
@@ -42,8 +46,8 @@ class LoadLayersAlgorithm(BaseDataAlgorithm):
         return (
             "Charger les couches de la base de données."
             "<br>"
-            f"Le code client est obligatoire si il n'est pas fourni dans le projet dans une variable de "
-            f"projet '{self.KEY}'."
+            "Le code client est obligatoire si il n'est pas fourni dans"
+            f" le projet dans une variable de projet '{self.KEY}'."
         )
 
     def initAlgorithm(self, config: Dict):
@@ -82,6 +86,17 @@ class LoadLayersAlgorithm(BaseDataAlgorithm):
         param.setHelp("Code client NetADS attribué à la collectivité")
         self.addParameter(param)
 
+        param = QgsProcessingParameterString(
+            self.PREFIX_PARCELLE,
+            "Préfixe parcellaire",
+            optional=True,
+        )
+        param.setHelp(
+            "Code départemental (2 caractères) et "
+            "code de direction (1 caractère)"
+        )
+        self.addParameter(param)
+
         self.addOutput(
             QgsProcessingOutputMultipleLayers(self.OUTPUT, "Couches de sortie")
         )
@@ -97,22 +112,63 @@ class LoadLayersAlgorithm(BaseDataAlgorithm):
         )
         schema = self.parameterAsSchema(parameters, self.SCHEMA, context)
 
-        code_client = self.parameterAsString(parameters, self.CODE_CLIENT, context)
-        if code_client:
-            QgsExpressionContextUtils.setProjectVariable(context.project(), self.KEY, code_client)
-            feedback.pushInfo(
-                f"Ajout du code client NetADS {code_client} dans la variable du projet '{self.KEY}'."
-            )
-        else:
-            # The input was empty so the variable must be in the project already
+        code_client = self.parameterAsString(
+            parameters,
+            self.CODE_CLIENT,
+            context
+        )
+        prefix_parcelle = self.parameterAsString(
+            parameters,
+            self.PREFIX_PARCELLE,
+            context
+        )
+
+        # Check parameters and raise errors
+        if not code_client:
+            # The input was empty so the variable must be in
+            # the project already
             variables = context.project().customVariables()
-            url = variables.get(self.KEY)
+            url = variables.get(Key.Code)
             if not url:
                 # The virtual field needs this variable on runtime.
                 raise QgsProcessingException(
-                    f"Votre projet ne contient pas la variable {self.KEY}, vous devez donc renseigner la "
-                    f"valeur pour l'identifiant client NetADS."
+                    f"Votre projet ne contient pas la variable {Key.Code}, "
+                    "vous devez donc renseigner la "
+                    "valeur pour l'identifiant client NetADS."
                 )
+
+        if prefix_parcelle and len(prefix_parcelle) != 3:
+            # The virtual field needs this variable on runtime.
+            raise QgsProcessingException(
+                    "Le préfixe parcellaire doit contenir 3 caractères : "
+                    "le code département (2 caractères) + "
+                    "le code de direction (1 caractère). "
+                    f"Le préfixe parcellaire proposé `{prefix_parcelle}` est "
+                    f"de longueur {len(prefix_parcelle)}."
+            )
+
+        # Then set variables
+        if code_client:
+            QgsExpressionContextUtils.setProjectVariable(
+                context.project(),
+                Key.Code,
+                code_client
+            )
+            feedback.pushInfo(
+                f"Ajout du code client NetADS {code_client} dans "
+                f"la variable du projet '{Key.Code}'."
+            )
+
+        if prefix_parcelle:
+            QgsExpressionContextUtils.setProjectVariable(
+                context.project(),
+                Key.Prefix,
+                prefix_parcelle
+            )
+            feedback.pushInfo(
+                f"Ajout du préfixe parcellaire {prefix_parcelle} dans "
+                f"la variable du projet '{Key.Prefix}'."
+            )
 
         feedback.pushInfo("## Connexion à la base de données ##")
 
