@@ -486,7 +486,7 @@ class ImportImpactsAlg(BaseDataAlgorithm):
 
             if champ_etiquette:
                 content_etiquette = self.clean_value(feature.attribute(champ_etiquette))
-                f"AND etiquette = {QgsExpression.quotedString(content_etiquette)} "
+                sql += f"AND etiquette = {QgsExpression.quotedString(content_etiquette)} "
 
             if champ_description:
                 content_description = self.clean_value(feature.attribute(champ_description))
@@ -518,7 +518,7 @@ class ImportImpactsAlg(BaseDataAlgorithm):
                     f"INSERT INTO {schema}.geo_impacts (id_impacts, libelle, codeinsee, geom) "
                     f"VALUES ("
                     f"'{ids}', "
-                    # f"{QgsExpression.quotedString(content_text)}, "
+                    f"{QgsExpression.quotedString(content_libelle)}, "
                     f"'{insee_code}', "
                     f"ST_GeomFromText('{feature.geometry().asWkt()}', '{crs}')"
                     f") RETURNING id_geo_impacts;"

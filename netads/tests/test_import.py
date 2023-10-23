@@ -18,6 +18,7 @@ from qgis.core import (  # QgsFeature,; QgsGeometry,; edit,
     QgsVectorLayer,
 )
 
+from netads.processing_netads.data.import_impacts import LISTE_TYPE
 from netads.processing_netads.provider import (
     NetAdsProvider as ProcessingProvider,
 )
@@ -35,14 +36,13 @@ class TestImport(DatabaseTestCase):
         del self.connection
         time.sleep(1)
 
-    @unittest.skip
     def test_import_impacts(self):
         """Test to import impacts in the database."""
         params = {
             "ENTREE": str(
                 plugin_test_data_path("plui", "248000747_INFO_SURF_20201109.shp")
             ),
-            "TYPE_IMPORT": "SERVITUDE",
+            "TYPE_IMPORT":  LISTE_TYPE[1],
             "CHAMP_CODE": "code",
             "CHAMP_SOUS_CODE": "",
             "CHAMP_ETIQUETTE": "",
@@ -73,7 +73,7 @@ class TestImport(DatabaseTestCase):
         self.assertEqual(11, result[0][0])
 
         communes = QgsVectorLayer(
-            str(plugin_test_data_path("communes.geojson")), "communes", "ogr"
+            str(plugin_test_data_path("commune.geojson")), "commune", "ogr"
         )
         for feature in communes.getFeatures():
             geom = feature.geometry()
@@ -89,45 +89,49 @@ class TestImport(DatabaseTestCase):
             # feedback.pushDebugInfo(sql)
             connection.executeSql(sql)
 
+        sql = "SELECT COUNT(*) FROM netads.communes;"
+        result = connection.executeSql(sql)
+        self.assertEqual(1, result[0][0])
+
         results = processing.run(alg, params)
 
         # We have municipalities now
-        self.assertEqual(results["COUNT_FEATURES"], 0)
+        self.assertEqual(results["COUNT_FEATURES"], 71)
         self.assertEqual(results["COUNT_NEW_IMPACTS"], 0)
 
         # INSEE should match the geojson
         sql = "SELECT codeinsee FROM netads.geo_impacts GROUP BY codeinsee;"
         result = connection.executeSql(sql)
-        self.assertEqual(len(result), 0)
-        # self.assertEqual(result[0][0], "80016")
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0][0], "80016")
 
         # Empty geo_impacts
         sql = "TRUNCATE netads.geo_impacts RESTART IDENTITY;"
         connection.executeSql(sql)
 
-        # params["CHAMP_INSEE"] = "WRONGINSEE"
-        # alg = "{}:data_impacts".format(provider.id())
-        # results = processing.run(alg, params)
+        params["CHAMP_INSEE"] = "WRONGINSEE"
+        alg = "{}:data_impacts".format(provider.id())
+        results = processing.run(alg, params)
 
         # 0 because the INSEE code is 80999
-        # The WRONGINSEE column has only INSEE code which are not in the communes.geojson
+        # The WRONGINSEE column has only INSEE code which are not in the commune.geojson
         # 80999 versus 800016
-        # self.assertEqual(results["COUNT_FEATURES"], 0)
-        # self.assertEqual(results["COUNT_NEW_IMPACTS"], 0)
+        self.assertEqual(results["COUNT_FEATURES"], 0)
+        self.assertEqual(results["COUNT_NEW_IMPACTS"], 0)
 
-        # params["CHAMP_INSEE"] = "INSEE"
-        # alg = "{}:data_impacts".format(provider.id())
-        # results = processing.run(alg, params)
-        #
-        # # 70 because only 70 have a code INSEE = 80016
-        # self.assertEqual(results["COUNT_FEATURES"], 0)
-        # self.assertEqual(results["COUNT_NEW_IMPACTS"], 0)
-        #
-        # # INSEE should match the field 80016
-        # sql = "SELECT codeinsee FROM netads.geo_impacts GROUP BY codeinsee;"
-        # result = connection.executeSql(sql)
-        # # self.assertEqual(len(result), 1)
-        # # self.assertEqual(result[0][0], "80016")
+        params["CHAMP_INSEE"] = "INSEE"
+        alg = "{}:data_impacts".format(provider.id())
+        results = processing.run(alg, params)
+
+        # 70 because only 70 have a code INSEE = 80016
+        self.assertEqual(results["COUNT_FEATURES"], 70)
+        self.assertEqual(results["COUNT_NEW_IMPACTS"], 0)
+
+        # INSEE should match the field 80016
+        sql = "SELECT codeinsee FROM netads.geo_impacts GROUP BY codeinsee;"
+        result = connection.executeSql(sql)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0][0], "80016")
 
 
 if __name__ == "__main__":
