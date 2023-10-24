@@ -35,7 +35,10 @@ LISTE_TYPE = (
     'ZONAGE', 'SERVITUDE', 'PRESCRIPTION', 'INFORMATION',
 )
 
-# Impact = namedtuple('Impact', ['type', 'code', 'sous_code', 'etiquette', 'libelle', 'description'])
+# Impact = namedtuple(
+#     'Impact',
+#     ['type', 'code', 'sous_code', 'etiquette', 'libelle', 'description']
+# )
 
 
 def sql_error_handler(func: Callable):
@@ -79,7 +82,8 @@ class ImportImpactsAlg(BaseDataAlgorithm):
         return (
             "Ajout des données pour les tables des impacts"
             "<br>"
-            f"Le champ pour le 'type' doit contenir exclusivement les valeurs suivantes : "
+            "Le champ pour le 'type' doit contenir exclusivement "
+            "les valeurs suivantes : "
             f"{','.join(LISTE_TYPE)}"
         )
 
@@ -92,7 +96,9 @@ class ImportImpactsAlg(BaseDataAlgorithm):
             [QgsProcessing.TypeVectorPolygon],
             optional=False,
         )
-        param.setHelp("Couche vecteur qu'il faut importer dans la base de données")
+        param.setHelp(
+            "Couche vecteur qu'il faut importer dans la base de données"
+        )
         self.addParameter(param)
 
         # noinspection PyArgumentList
@@ -114,7 +120,8 @@ class ImportImpactsAlg(BaseDataAlgorithm):
         )
         # TODO check ?
         param.setHelp(
-            "Zonage, Impacts, Servitudes, Droit de Préemption, Lotissement, ou tout autre valeur libre"
+            "Zonage, Impacts, Servitudes, Droit de Préemption, Lotissement, "
+            "ou tout autre valeur libre"
         )
         self.addParameter(param)
 
@@ -166,7 +173,8 @@ class ImportImpactsAlg(BaseDataAlgorithm):
             optional=True,
         )
         param.setHelp(
-            "Champ du code INSEE pour l'impact. Si le champ n'est pas fourni, le code INSEE proviendra "
+            "Champ du code INSEE pour l'impact. Si le champ n'est pas fourni, "
+            "le code INSEE proviendra "
             "de l'intersection avec la commune."
         )
         self.addParameter(param)
@@ -196,7 +204,9 @@ class ImportImpactsAlg(BaseDataAlgorithm):
         self.addParameter(param)
 
         self.addOutput(
-            QgsProcessingOutputNumber(self.COUNT_FEATURES, "Nombre d'entités importés")
+            QgsProcessingOutputNumber(
+                self.COUNT_FEATURES, "Nombre d'entités importés"
+            )
         )
 
         self.addOutput(
@@ -206,7 +216,11 @@ class ImportImpactsAlg(BaseDataAlgorithm):
         )
 
     # noinspection PyMethodOverriding
-    def checkParameterValues(self, parameters: Dict, context: QgsProcessingContext):
+    def checkParameterValues(
+        self,
+        parameters: Dict,
+        context: QgsProcessingContext
+    ):
         # noinspection PyArgumentList
         metadata = QgsProviderRegistry.instance().providerMetadata("postgres")
         connection_name = self.parameterAsConnectionName(
@@ -236,7 +250,9 @@ class ImportImpactsAlg(BaseDataAlgorithm):
         connection_name = self.parameterAsConnectionName(
             parameters, self.CONNECTION_NAME, context
         )
-        schema_netads = self.parameterAsSchema(parameters, self.SCHEMA_NETADS, context)
+        schema_netads = self.parameterAsSchema(
+            parameters, self.SCHEMA_NETADS, context
+        )
 
         # noinspection PyArgumentList
         metadata = QgsProviderRegistry.instance().providerMetadata("postgres")
@@ -248,14 +264,29 @@ class ImportImpactsAlg(BaseDataAlgorithm):
                 f"La connexion {connection_name} n'existe pas."
             )
 
-        couche_entree = self.parameterAsSource(parameters, self.ENTREE, context)
-        import_type = self.parameterAsEnumString(parameters, self.TYPE_IMPORT, context)
-        champ_code = self.parameterAsString(parameters, self.CHAMP_CODE, context)
-        champ_sous_code = self.parameterAsString(parameters, self.CHAMP_SOUS_CODE, context)
-        champ_etiquette = self.parameterAsString(parameters, self.CHAMP_ETIQUETTE, context)
-        champ_libelle = self.parameterAsString(parameters, self.CHAMP_LIBELLE, context)
-        champ_description = self.parameterAsString(parameters, self.CHAMP_DESCRIPTION, context)
-        champ_insee = self.parameterAsString(parameters, self.CHAMP_INSEE, context)
+        couche_entree = self.parameterAsSource(
+            parameters, self.ENTREE, context
+        )
+        import_type = self.parameterAsEnumString(
+            parameters, self.TYPE_IMPORT, context
+        )
+        champ_code = self.parameterAsString(
+            parameters, self.CHAMP_CODE, context
+        )
+        champ_sous_code = self.parameterAsString(
+            parameters, self.CHAMP_SOUS_CODE, context)
+        champ_etiquette = self.parameterAsString(
+            parameters, self.CHAMP_ETIQUETTE, context
+        )
+        champ_libelle = self.parameterAsString(
+            parameters, self.CHAMP_LIBELLE, context
+        )
+        champ_description = self.parameterAsString(
+            parameters, self.CHAMP_DESCRIPTION, context
+        )
+        champ_insee = self.parameterAsString(
+            parameters, self.CHAMP_INSEE, context
+        )
 
         results = {
             self.COUNT_FEATURES: 0,
@@ -279,7 +310,9 @@ class ImportImpactsAlg(BaseDataAlgorithm):
 
         connection.executeSql("BEGIN;")
 
-        existing_impacts = self.existing_impacts_in_database(connection, schema_netads, feedback)
+        existing_impacts = self.existing_impacts_in_database(
+            connection, schema_netads, feedback
+        )
 
         if feedback.isCanceled():
             connection.executeSql("ROLLBACK;")
@@ -288,8 +321,8 @@ class ImportImpactsAlg(BaseDataAlgorithm):
         missing_in_db = list(set(uniques) - set(existing_impacts.values()))
 
         feedback.pushInfo(
-            f"Dans le jeu de données, il y a {len(missing_in_db)} nouveau(x) impact(s) par rapport à la "
-            f"base: "
+            f"Dans le jeu de données, il y a {len(missing_in_db)} "
+            "nouveau(x) impact(s) par rapport à la base: "
         )
 
         self.insert_new_impacts(
@@ -305,7 +338,9 @@ class ImportImpactsAlg(BaseDataAlgorithm):
             return results
 
         crs = self.check_current_crs(connection, schema_netads, feedback)
-        feedback.pushInfo(f"La projection du schéma {schema_netads} est en EPSG:{crs}.")
+        feedback.pushInfo(
+            f"La projection du schéma {schema_netads} est en EPSG:{crs}."
+        )
 
         couche_entree = self.prepare_data(
             context,
@@ -319,8 +354,9 @@ class ImportImpactsAlg(BaseDataAlgorithm):
 
         if not champ_insee:
             feedback.pushInfo(
-                "Le champ code INSEE n'est pas renseigné, l'import des impacts va donc découper les "
-                f"impacts selon les communes de la couche 'communes' dans le schéma '{schema_netads}'."
+                "Le champ code INSEE n'est pas renseigné, l'import des "
+                "impacts va donc découper les impacts selon les communes "
+                f"de la couche 'communes' dans le schéma '{schema_netads}'."
             )
             couche_entree = self.split_layer_impacts(
                 context, feedback, couche_entree, connection, schema_netads
@@ -329,16 +365,18 @@ class ImportImpactsAlg(BaseDataAlgorithm):
             insee_list = None
         else:
             feedback.pushInfo(
-                f"Le code INSEE est '{champ_insee}' dans la couche {couche_entree.name()}. L'import va "
-                f"utiliser la valeur de ce champ pour l'import."
+                f"Le code INSEE est '{champ_insee}' dans la couche "
+                f"{couche_entree.name()}. L'import va utiliser la "
+                "valeur de ce champ pour l'import."
             )
-            sql = f"SELECT codeinsee FROM {schema_netads}.communes GROUP BY codeinsee;"
+            sql = f"SELECT codeinsee FROM {schema_netads}.communes"
+            sql += " GROUP BY codeinsee;"
             result = connection.executeSql(sql)
             insee_list = [str(f[0]) for f in result]
             feedback.pushDebugInfo(
-                f"Uniquement les impacts dont le code INSEE est dans la liste suivante "
-                f"{','.join(insee_list)} vont être importés car ils sont dans la table "
-                f"{schema_netads}.communes."
+                "Uniquement les impacts dont le code INSEE est dans la "
+                f"liste suivante {','.join(insee_list)} vont être importés "
+                f"car ils sont dans la table {schema_netads}.communes."
             )
 
         if feedback.isCanceled():
@@ -367,7 +405,9 @@ class ImportImpactsAlg(BaseDataAlgorithm):
             return results
 
         connection.executeSql("COMMIT;")
-        feedback.pushInfo(f"{success} nouvelles géo-impacts dans la base de données")
+        feedback.pushInfo(
+            f"{success} nouvelles géo-impacts dans la base de données"
+        )
         results[self.COUNT_FEATURES] = success
         results[self.COUNT_NEW_IMPACTS] = len(missing_in_db)
         return results
@@ -410,7 +450,9 @@ class ImportImpactsAlg(BaseDataAlgorithm):
         if feedback.isCanceled():
             return
 
-        feedback.pushInfo("Transformation de multi vers unique de la nouvelle couche")
+        feedback.pushInfo(
+            "Transformation de multi vers unique de la nouvelle couche"
+        )
         # noinspection PyUnresolvedReferences
         result = processing.run(
             "native:multiparttosingleparts",
@@ -427,7 +469,9 @@ class ImportImpactsAlg(BaseDataAlgorithm):
             return
 
         feedback.pushInfo("Intersection OK des impacts avec les communes.")
-        layer = QgsProcessingUtils.mapLayerFromString(result["OUTPUT"], context, True)
+        layer = QgsProcessingUtils.mapLayerFromString(
+            result["OUTPUT"], context, True
+        )
         return layer
 
     @sql_error_handler
@@ -451,46 +495,62 @@ class ImportImpactsAlg(BaseDataAlgorithm):
         success = 0
         fail = 0
         for feature in layer.getFeatures():
-            content_code = self.clean_value(feature.attribute(champ_code))
-            content_libelle = self.clean_value(feature.attribute(champ_libelle))
-            insee_code = self.clean_value(feature.attribute(champ_insee))
+            content_code = self.clean_value(
+                feature.attribute(champ_code)
+            )
+            content_libelle = self.clean_value(
+                feature.attribute(champ_libelle)
+            )
+            insee_code = self.clean_value(
+                feature.attribute(champ_insee)
+            )
 
             if insee_code == "":
                 feedback.pushDebugInfo(
-                    f"Omission de l'entité {feature.id()} car elle n'a pas de code INSEE."
+                    f"Omission de l'entité {feature.id()} car "
+                    "elle n'a pas de code INSEE."
                 )
                 fail += 1
                 continue
 
             if insee_list and str(insee_code) not in insee_list:
                 feedback.pushDebugInfo(
-                    f"Omission de l'entité {feature.id()} car son code INSEE n'est pas dans la table "
-                    f"netads.communes"
+                    f"Omission de l'entité {feature.id()} car "
+                    "son code INSEE n'est pas dans la table netads.communes"
                 )
                 fail += 1
                 continue
 
             # noinspection PyArgumentList
             sql = (
-                f"SELECT id_impacts "
-                f"FROM "
+                "SELECT id_impacts "
+                "FROM "
                 f"{schema}.impacts "
-                f"WHERE "
+                "WHERE "
                 f"type = {QgsExpression.quotedString(import_type)} "
                 f"AND code = {QgsExpression.quotedString(content_code)} "
                 f"AND libelle = {QgsExpression.quotedString(content_libelle)} "
             )
             if champ_sous_code:
-                content_sous_code = self.clean_value(feature.attribute(champ_sous_code))
-                sql += f"AND sous_code = {QgsExpression.quotedString(content_sous_code)} "
+                content_sous_code = self.clean_value(
+                    feature.attribute(champ_sous_code)
+                )
+                sql += "AND sous_code = "
+                sql += f"{QgsExpression.quotedString(content_sous_code)} "
 
             if champ_etiquette:
-                content_etiquette = self.clean_value(feature.attribute(champ_etiquette))
-                f"AND etiquette = {QgsExpression.quotedString(content_etiquette)} "
+                content_etiquette = self.clean_value(
+                    feature.attribute(champ_etiquette)
+                )
+                sql += "AND etiquette = "
+                sql += f"{QgsExpression.quotedString(content_etiquette)} "
 
             if champ_description:
-                content_description = self.clean_value(feature.attribute(champ_description))
-                sql += f"AND description = {QgsExpression.quotedString(content_description)}"
+                content_description = self.clean_value(
+                    feature.attribute(champ_description)
+                )
+                sql += "AND description = "
+                sql += f"{QgsExpression.quotedString(content_description)}"
 
             sql += ';'
             # feedback.pushDebugInfo(sql)
@@ -498,7 +558,8 @@ class ImportImpactsAlg(BaseDataAlgorithm):
             if len(result) == 0:
                 # This case shouldn't happen ... it's covered before
                 feedback.reportError(
-                    f"Omission de l'entité {feature.id()} car elle n'y a pas d'impact dans la base"
+                    f"Omission de l'entité {feature.id()} car "
+                    "il n'y a pas d'impact dans la base"
                 )
                 fail += 1
             else:
@@ -506,7 +567,8 @@ class ImportImpactsAlg(BaseDataAlgorithm):
                 ids = [str(v[0]) for v in result]
                 if len(ids) > 1:
                     feedback.reportError(
-                        f"Erreur, il y a plusieurs identifiants lors de l'exécution : {sql}"
+                        "Erreur, il y a plusieurs identifiants "
+                        f"lors de l'exécution : {sql}"
                     )
                     fail += 1
                     continue
@@ -515,13 +577,14 @@ class ImportImpactsAlg(BaseDataAlgorithm):
 
                 # noinspection PyArgumentList
                 sql = (
-                    f"INSERT INTO {schema}.geo_impacts (id_impacts, libelle, codeinsee, geom) "
-                    f"VALUES ("
+                    f"INSERT INTO {schema}.geo_impacts "
+                    "(id_impacts, libelle, codeinsee, geom) "
+                    "VALUES ("
                     f"'{ids}', "
-                    # f"{QgsExpression.quotedString(content_text)}, "
+                    f"{QgsExpression.quotedString(content_libelle)}, "
                     f"'{insee_code}', "
                     f"ST_GeomFromText('{feature.geometry().asWkt()}', '{crs}')"
-                    f") RETURNING id_geo_impacts;"
+                    ") RETURNING id_geo_impacts;"
                 )
                 # feedback.pushDebugInfo(sql)
                 result = connection.executeSql(sql)
@@ -532,7 +595,8 @@ class ImportImpactsAlg(BaseDataAlgorithm):
 
         if fail > 0:
             feedback.reportError(
-                f"Veuillez lire logs ci-dessus, car il y a {fail} entités en défaut."
+                f"Veuillez lire logs ci-dessus, car il y a {fail} entités "
+                "en défaut."
             )
 
         return success
@@ -554,7 +618,8 @@ class ImportImpactsAlg(BaseDataAlgorithm):
     ) -> str:
         """The current CRS in the database"""
         # Let's do it on communes
-        # QGIS doesn't manage well if geometry_columns is not the search_path anyway
+        # QGIS doesn't manage well if geometry_columns is not
+        # the search_path anyway
         sql = (
             f"SELECT srid FROM public.geometry_columns "
             f"WHERE f_table_schema = '{schema}' AND f_table_name = 'communes';"
@@ -576,7 +641,9 @@ class ImportImpactsAlg(BaseDataAlgorithm):
         uri.setTable("impacts")
         uri.setKeyColumn("id_impacts")
         existing_impacts = {}
-        existing_constraints_layer = QgsVectorLayer(uri.uri(), "impacts", "postgres")
+        existing_constraints_layer = QgsVectorLayer(
+            uri.uri(), "impacts", "postgres"
+        )
         for feature in existing_constraints_layer.getFeatures():
             existing_impacts[feature.attribute("id_impacts")] = (
                 feature['type'],
@@ -586,7 +653,10 @@ class ImportImpactsAlg(BaseDataAlgorithm):
                 feature['libelle'],
                 feature['description'],
             )
-        feedback.pushInfo(f"Il y a {len(existing_impacts)} impact(s) dans la base de données.")
+        feedback.pushInfo(
+            f"Il y a {len(existing_impacts)} impact(s) dans "
+            "la base de données."
+        )
         return existing_impacts
 
     @staticmethod
@@ -598,9 +668,11 @@ class ImportImpactsAlg(BaseDataAlgorithm):
         missing_in_db: List[Tuple[str, str, str, str, str, str]],
         schema_netads: str,
     ) -> dict[str, Tuple[str, str, str, str, str, str]]:
-        """Insert new impacts in the database and return the list of new IDs."""
-        # Input import_type, contenu_code, contenu_sous_code, contenu_etiquette,
-        # contenu_libelle, contenu_description
+        """
+        Insert new impacts in the database and return the list of new IDs.
+        """
+        # Input import_type, contenu_code, contenu_sous_code,
+        # contenu_etiquette, contenu_libelle, contenu_description
         for new in missing_in_db:
             # Quicker, to get the impact_id with raw SQL query
             # noinspection PyArgumentList
@@ -618,9 +690,12 @@ class ImportImpactsAlg(BaseDataAlgorithm):
             )
             result = connection.executeSql(sql)
             feedback.pushDebugInfo(
-                f"    Insertion dans la table 'impacts' : ID {result[0][0]} → {new}"
+                "    Insertion dans la table 'impacts' : "
+                f"ID {result[0][0]} → {new}"
             )
-            existing_impacts[result[0][0]] = (new[0], new[1], new[2], new[3], new[4], new[5])
+            existing_impacts[result[0][0]] = (
+                new[0], new[1], new[2], new[3], new[4], new[5]
+            )
         return existing_impacts
 
     @staticmethod
@@ -680,7 +755,9 @@ class ImportImpactsAlg(BaseDataAlgorithm):
         if feedback.isCanceled():
             return
 
-        layer = QgsProcessingUtils.mapLayerFromString(result["OUTPUT"], context, True)
+        layer = QgsProcessingUtils.mapLayerFromString(
+            result["OUTPUT"], context, True
+        )
         feedback.pushInfo("Les données sont désormais OK pour l'import.")
         return layer
 
@@ -706,16 +783,24 @@ class ImportImpactsAlg(BaseDataAlgorithm):
 
             contenu_code = ImportImpactsAlg.clean_value(feature[champ_code])
             if champ_sous_code:
-                contenu_sous_code = ImportImpactsAlg.clean_value(feature[champ_sous_code])
+                contenu_sous_code = ImportImpactsAlg.clean_value(
+                    feature[champ_sous_code]
+                )
             if champ_etiquette:
-                contenu_etiquette = ImportImpactsAlg.clean_value(feature[champ_etiquette])
-            contenu_libelle = ImportImpactsAlg.clean_value(feature[champ_libelle])
+                contenu_etiquette = ImportImpactsAlg.clean_value(
+                    feature[champ_etiquette]
+                )
+            contenu_libelle = ImportImpactsAlg.clean_value(
+                feature[champ_libelle]
+            )
             if champ_description:
-                contenu_description = ImportImpactsAlg.clean_value(feature[champ_description])
+                contenu_description = ImportImpactsAlg.clean_value(
+                    feature[champ_description]
+                )
 
             couple = (
-                import_type, contenu_code, contenu_sous_code, contenu_etiquette, contenu_libelle,
-                contenu_description
+                import_type, contenu_code, contenu_sous_code,
+                contenu_etiquette, contenu_libelle, contenu_description
             )
             if couple not in uniques:
                 uniques.append(couple)
@@ -724,16 +809,23 @@ class ImportImpactsAlg(BaseDataAlgorithm):
             if feedback.isCanceled():
                 return []
 
-        couple = [champ_code, champ_sous_code, champ_etiquette, champ_libelle, champ_description]
+        couple = [
+            champ_code,
+            champ_sous_code,
+            champ_etiquette,
+            champ_libelle,
+            champ_description
+        ]
         # To remove empty variables, all fields are not required
         couple = [f for f in couple if f]
         feedback.pushInfo(
-            f"Dans la source, il y a {len(uniques)} couples uniques sur le couple : {','.join(couple)}"
+            f"Dans la source, il y a {len(uniques)} couples uniques "
+            f"sur le couple : {','.join(couple)}"
         )
         if len(couple) != 5:
             feedback.pushInfo(
-                "Étant donné que certain(s) champ(s) est/sont vide(s) dans lors du lancement de "
-                "l'algorithme :")
+                "Étant donné que certain(s) champ(s) est/sont vide(s) dans "
+                "lors du lancement de l'algorithme :")
             if not champ_sous_code:
                 feedback.pushInfo("⚫ Sous-code")
             if not champ_etiquette:
@@ -741,7 +833,8 @@ class ImportImpactsAlg(BaseDataAlgorithm):
             if not champ_sous_code:
                 feedback.pushInfo("⚫ Description")
         feedback.pushDebugInfo(
-            f"Liste des couples uniques dans la couche : {','.join(uniques_str)}"
+            "Liste des couples uniques dans la couche : "
+            f"{','.join(uniques_str)}"
         )
 
         return uniques
