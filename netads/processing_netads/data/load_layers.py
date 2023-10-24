@@ -140,11 +140,11 @@ class LoadLayersAlgorithm(BaseDataAlgorithm):
         if prefix_parcelle and len(prefix_parcelle) != 3:
             # The virtual field needs this variable on runtime.
             raise QgsProcessingException(
-                    "Le préfixe parcellaire doit contenir 3 caractères : "
-                    "le code département (2 caractères) + "
-                    "le code de direction (1 caractère). "
-                    f"Le préfixe parcellaire proposé `{prefix_parcelle}` est "
-                    f"de longueur {len(prefix_parcelle)}."
+                "Le préfixe parcellaire doit contenir 3 caractères : "
+                "le code département (2 caractères) + "
+                "le code de direction (1 caractère). "
+                f"Le préfixe parcellaire proposé `{prefix_parcelle}` est "
+                f"de longueur {len(prefix_parcelle)}."
             )
 
         # Then set variables

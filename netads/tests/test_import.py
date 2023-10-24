@@ -4,13 +4,12 @@ __email__ = "info@3liz.org"
 
 import os
 import time
-import unittest
 
 from unittest import main
 
 import processing
 
-from qgis.core import (  # QgsFeature,; QgsGeometry,; edit,
+from qgis.core import (
     QgsCoordinateReferenceSystem,
     QgsCoordinateTransform,
     QgsProject,
@@ -18,7 +17,7 @@ from qgis.core import (  # QgsFeature,; QgsGeometry,; edit,
     QgsVectorLayer,
 )
 
-from netads.processing_netads.data.import_impacts import LISTE_TYPE
+from netads.processing_netads.data.import_impacts import ListeType
 from netads.processing_netads.provider import (
     NetAdsProvider as ProcessingProvider,
 )
@@ -42,7 +41,7 @@ class TestImport(DatabaseTestCase):
             "ENTREE": str(
                 plugin_test_data_path("plui", "248000747_INFO_SURF_20201109.shp")
             ),
-            "TYPE_IMPORT":  LISTE_TYPE[1],
+            "TYPE_IMPORT": ListeType.Servitude.value,
             "CHAMP_CODE": "code",
             "CHAMP_SOUS_CODE": "",
             "CHAMP_ETIQUETTE": "",

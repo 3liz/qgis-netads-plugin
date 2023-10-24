@@ -2,6 +2,7 @@ __copyright__ = "Copyright 2023, 3Liz"
 __license__ = "GPL version 3"
 __email__ = "info@3liz.org"
 
+from enum import Enum
 from typing import Callable, Dict, List, Tuple, Union
 
 from qgis import processing
@@ -31,14 +32,12 @@ from qgis.PyQt.QtCore import NULL
 
 from netads.processing_netads.data.base import BaseDataAlgorithm
 
-LISTE_TYPE = (
-    'ZONAGE', 'SERVITUDE', 'PRESCRIPTION', 'INFORMATION',
-)
 
-# Impact = namedtuple(
-#     'Impact',
-#     ['type', 'code', 'sous_code', 'etiquette', 'libelle', 'description']
-# )
+class ListeType(Enum):
+    Zonage = 'ZONAGE'
+    Servitude = 'SERVITUDE'
+    Prescription = 'PRESCRIPTION'
+    Information = 'INFORMATION'
 
 
 def sql_error_handler(func: Callable):
@@ -84,7 +83,7 @@ class ImportImpactsAlg(BaseDataAlgorithm):
             "<br>"
             "Le champ pour le 'type' doit contenir exclusivement "
             "les valeurs suivantes : "
-            f"{','.join(LISTE_TYPE)}"
+            f"{','.join([e.value for e in ListeType])}"
         )
 
     # noinspection PyMethodOverriding
@@ -105,7 +104,7 @@ class ImportImpactsAlg(BaseDataAlgorithm):
         param = QgsProcessingParameterEnum(
             self.TYPE_IMPORT,
             "Type d'import",
-            options=LISTE_TYPE,
+            options=[e.value for e in ListeType],
             optional=False,
         )
         param.setHelp("Type d'import concernant la couche")

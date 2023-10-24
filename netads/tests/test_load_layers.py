@@ -8,7 +8,6 @@ import processing
 from qgis.core import QgsProcessingContext, QgsProcessingException, QgsProject
 
 from netads.processing_netads.data.load_layers import Key
-
 from netads.tests.base_database import DatabaseTestCase
 from netads.tests.feedbacks import FeedbackPrint
 
