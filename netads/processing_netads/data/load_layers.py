@@ -27,7 +27,7 @@ class Key:
 
 class LoadLayersAlgorithm(BaseDataAlgorithm):
     """
-    Chargement des couches netads depuis la base de données
+    Chargement des couches NetADS depuis la base de données
     """
 
     CONNECTION_NAME = "CONNECTION_NAME"
@@ -47,9 +47,10 @@ class LoadLayersAlgorithm(BaseDataAlgorithm):
             "Charger les couches de la base de données."
             "<br>"
             "Le code client est obligatoire si il n'est pas fourni dans"
-            f" le projet dans une variable de projet '{self.KEY}'."
+            f" le projet dans une variable de projet '{Key.Code}'."
         )
 
+    # noinspection PyMethodOverriding
     def initAlgorithm(self, config: Dict):
         # INPUTS
         # Database connection parameters
