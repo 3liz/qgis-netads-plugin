@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 1.1.1 - 2024-10-28
+
 * Correction d'une erreur Python pour afficher l'aide dans l'algorithme de chargement des couches
 
 ## 1.1.0 - 2023-10-24
