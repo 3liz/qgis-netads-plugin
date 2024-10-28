@@ -3,8 +3,8 @@ BEGIN;
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.5 (Debian 15.5-1.pgdg110+1)
--- Dumped by pg_dump version 15.5 (Debian 15.5-1.pgdg110+1)
+-- Dumped from database version 15.8 (Debian 15.8-1.pgdg110+1)
+-- Dumped by pg_dump version 15.8 (Debian 15.8-1.pgdg110+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
