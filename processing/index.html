@@ -531,11 +531,11 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#chargement-des-couches-depuis-la-base" class="md-nav__link">
-    Chargement des couches depuis la base
+  <a href="#import-des-impacts" class="md-nav__link">
+    Import des impacts
   </a>
   
-    <nav class="md-nav" aria-label="Chargement des couches depuis la base">
+    <nav class="md-nav" aria-label="Import des impacts">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -547,6 +547,60 @@
         
           <li class="md-nav__item">
   <a href="#outputs_3" class="md-nav__link">
+    Outputs
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#import-des-parcelles" class="md-nav__link">
+    Import des parcelles
+  </a>
+  
+    <nav class="md-nav" aria-label="Import des parcelles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_4" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outputs_4" class="md-nav__link">
+    Outputs
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chargement-des-couches-depuis-la-base" class="md-nav__link">
+    Chargement des couches depuis la base
+  </a>
+  
+    <nav class="md-nav" aria-label="Chargement des couches depuis la base">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_5" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outputs_5" class="md-nav__link">
     Outputs
   </a>
   
@@ -716,11 +770,11 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#chargement-des-couches-depuis-la-base" class="md-nav__link">
-    Chargement des couches depuis la base
+  <a href="#import-des-impacts" class="md-nav__link">
+    Import des impacts
   </a>
   
-    <nav class="md-nav" aria-label="Chargement des couches depuis la base">
+    <nav class="md-nav" aria-label="Import des impacts">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -732,6 +786,60 @@
         
           <li class="md-nav__item">
   <a href="#outputs_3" class="md-nav__link">
+    Outputs
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#import-des-parcelles" class="md-nav__link">
+    Import des parcelles
+  </a>
+  
+    <nav class="md-nav" aria-label="Import des parcelles">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_4" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outputs_4" class="md-nav__link">
+    Outputs
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chargement-des-couches-depuis-la-base" class="md-nav__link">
+    Chargement des couches depuis la base
+  </a>
+  
+    <nav class="md-nav" aria-label="Chargement des couches depuis la base">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#parameters_5" class="md-nav__link">
+    Parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#outputs_5" class="md-nav__link">
     Outputs
   </a>
   
@@ -989,19 +1097,232 @@
 <td style="text-align: center;">MultipleLayers</td>
 <td style="text-align: center;"></td>
 </tr>
+</tbody>
+</table>
+<hr />
+<h3 id="import-des-impacts">Import des impacts<a class="headerlink" href="#import-des-impacts" title="Permanent link">#</a></h3>
+<p>Ajout des données pour les tables des impacts<br>Le champ pour le 'type' doit contenir exclusivement les valeurs suivantes : ZONAGE,SERVITUDE,PRESCRIPTION,INFORMATION</p>
+<p><img alt="algo_id" src="netads-data_impacts.jpg" /></p>
+<h4 id="parameters_3">Parameters<a class="headerlink" href="#parameters_3" title="Permanent link">#</a></h4>
+<table>
+<thead>
 <tr>
-<td style="text-align: center;">OUTPUT MSG</td>
-<td style="text-align: center;">Message de sortie</td>
-<td style="text-align: center;">String</td>
+<th style="text-align: center;">ID</th>
+<th style="text-align: center;">Description</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Info</th>
+<th style="text-align: center;">Required</th>
+<th style="text-align: center;">Advanced</th>
+<th style="text-align: center;">Option</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">ENTREE</td>
+<td style="text-align: center;">Couche en entrée pour les impacts</td>
+<td style="text-align: center;">FeatureSource</td>
+<td style="text-align: center;">Couche vecteur qu'il faut importer dans la base de données</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">TYPE_IMPORT</td>
+<td style="text-align: center;">Type d'import</td>
+<td style="text-align: center;">Enum</td>
+<td style="text-align: center;">Type d'import concernant la couche</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">Values: ZONAGE, SERVITUDE, PRESCRIPTION, INFORMATION <br></td>
+</tr>
+<tr>
+<td style="text-align: center;">CHAMP_CODE</td>
+<td style="text-align: center;">Champ pour le code</td>
+<td style="text-align: center;">Field</td>
+<td style="text-align: center;">Zonage, Impacts, Servitudes, Droit de Préemption, Lotissement, ou tout autre valeur libre</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">CHAMP_SOUS_CODE</td>
+<td style="text-align: center;">Champ pour le sous-code</td>
+<td style="text-align: center;">Field</td>
+<td style="text-align: center;">Valeur libre</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">CHAMP_ETIQUETTE</td>
+<td style="text-align: center;">Champ des étiquettes</td>
+<td style="text-align: center;">Field</td>
+<td style="text-align: center;">Champ des étiquettes pour l'impact</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">CHAMP_LIBELLE</td>
+<td style="text-align: center;">Champ des libellés</td>
+<td style="text-align: center;">Field</td>
+<td style="text-align: center;">Champ des libellés pour l'impact</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">CHAMP_DESCRIPTION</td>
+<td style="text-align: center;">Champ des descriptions</td>
+<td style="text-align: center;">Field</td>
+<td style="text-align: center;">Champ des libellés pour l'impact</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">CHAMP_INSEE</td>
+<td style="text-align: center;">Champ du code INSEE</td>
+<td style="text-align: center;">Field</td>
+<td style="text-align: center;">Champ du code INSEE pour l'impact. Si le champ n'est pas fourni, le code INSEE proviendra de l'intersection avec la commune.</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">CONNECTION_NAME</td>
+<td style="text-align: center;">Connexion PostgreSQL vers la base de données</td>
+<td style="text-align: center;">ProviderConnection</td>
+<td style="text-align: center;">Base de données de destination</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">SCHEMA_NETADS</td>
+<td style="text-align: center;">Schéma NetADS</td>
+<td style="text-align: center;">DatabaseSchema</td>
+<td style="text-align: center;">Nom du schéma des données NetADS</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">Default: netads <br></td>
+</tr>
+</tbody>
+</table>
+<h4 id="outputs_3">Outputs<a class="headerlink" href="#outputs_3" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">ID</th>
+<th style="text-align: center;">Description</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Info</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">COUNT_FEATURES</td>
+<td style="text-align: center;">Nombre d'entités importés</td>
+<td style="text-align: center;">Number</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">COUNT_NEW_IMPACTS</td>
+<td style="text-align: center;">Nombre de nouveaux impacts</td>
+<td style="text-align: center;">Number</td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="import-des-parcelles">Import des parcelles<a class="headerlink" href="#import-des-parcelles" title="Permanent link">#</a></h3>
+<p>Ajout des données pour la table parcelles</p>
+<p><img alt="algo_id" src="netads-data_parcelle.jpg" /></p>
+<h4 id="parameters_4">Parameters<a class="headerlink" href="#parameters_4" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">ID</th>
+<th style="text-align: center;">Description</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Info</th>
+<th style="text-align: center;">Required</th>
+<th style="text-align: center;">Advanced</th>
+<th style="text-align: center;">Option</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">CONNECTION_NAME</td>
+<td style="text-align: center;">Connexion PostgreSQL vers la base de données</td>
+<td style="text-align: center;">ProviderConnection</td>
+<td style="text-align: center;">Base de données de destination</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">SCHEMA_CADASTRE</td>
+<td style="text-align: center;">Schéma Cadastre</td>
+<td style="text-align: center;">DatabaseSchema</td>
+<td style="text-align: center;">Nom du schéma des données cadastre</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">Default: cadastre <br></td>
+</tr>
+<tr>
+<td style="text-align: center;">SCHEMA_NETADS</td>
+<td style="text-align: center;">Schéma NetADS</td>
+<td style="text-align: center;">DatabaseSchema</td>
+<td style="text-align: center;">Nom du schéma des données NetADS</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">Default: netads <br></td>
+</tr>
+<tr>
+<td style="text-align: center;">TRUNCATE_PARCELLES</td>
+<td style="text-align: center;">Mise à jour de la table parcelles</td>
+<td style="text-align: center;">Boolean</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr>
+<td style="text-align: center;">IMPORT_PROJECT_LAYER</td>
+<td style="text-align: center;">Importer la couche dans le projet</td>
+<td style="text-align: center;">Boolean</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+</tbody>
+</table>
+<h4 id="outputs_4">Outputs<a class="headerlink" href="#outputs_4" title="Permanent link">#</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">ID</th>
+<th style="text-align: center;">Description</th>
+<th style="text-align: center;">Type</th>
+<th style="text-align: center;">Info</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;">OUTPUT</td>
+<td style="text-align: center;">Couches de sortie</td>
+<td style="text-align: center;">MultipleLayers</td>
 <td style="text-align: center;"></td>
 </tr>
 </tbody>
 </table>
 <hr />
 <h3 id="chargement-des-couches-depuis-la-base">Chargement des couches depuis la base<a class="headerlink" href="#chargement-des-couches-depuis-la-base" title="Permanent link">#</a></h3>
-<p>Charger les couches de la base de données.</p>
+<p>Charger les couches de la base de données.<br>Le code client est obligatoire si il n'est pas fourni dans le projet dans une variable de projet 'netads_idclient'.</p>
 <p><img alt="algo_id" src="netads-load_layers.jpg" /></p>
-<h4 id="parameters_3">Parameters<a class="headerlink" href="#parameters_3" title="Permanent link">#</a></h4>
+<h4 id="parameters_5">Parameters<a class="headerlink" href="#parameters_5" title="Permanent link">#</a></h4>
 <table>
 <thead>
 <tr>
@@ -1042,9 +1363,18 @@
 <td style="text-align: center;"></td>
 <td style="text-align: center;"></td>
 </tr>
+<tr>
+<td style="text-align: center;">PREFIX_PARCELLE</td>
+<td style="text-align: center;">Préfixe parcellaire</td>
+<td style="text-align: center;">String</td>
+<td style="text-align: center;">Code départemental (2 caractères) et code de direction (1 caractère)</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
 </tbody>
 </table>
-<h4 id="outputs_3">Outputs<a class="headerlink" href="#outputs_3" title="Permanent link">#</a></h4>
+<h4 id="outputs_5">Outputs<a class="headerlink" href="#outputs_5" title="Permanent link">#</a></h4>
 <table>
 <thead>
 <tr>
@@ -1070,7 +1400,7 @@
   <small>
     
       Dernière mise à jour:
-      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">31 août 2023</span>
+      <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">29 octobre 2024</span>
       
     
   </small>
